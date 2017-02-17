@@ -1,0 +1,17 @@
+services:
+    phlexible_node_connection.connection_types:
+        class: Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeCollection
+        arguments:
+            - []
+
+    phlexible_node_connection.node_connection_manager:
+        class: Phlexible\Bundle\NodeConnectionBundle\Doctrine\NodeConnectionManager
+        arguments:
+            - "@entity_manager"
+            - "@event_dispatcher"
+            - "@phlexible_node_connection.connection_types"
+
+    phlexible_node_connection.node_listener:
+        class: Phlexible\Bundle\NodeConnectionBundle\EventListener\NodeListener
+        arguments:
+            - "@phlexible_node_connection.node_connection_manager"

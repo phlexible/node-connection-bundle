@@ -1,0 +1,25 @@
+nodeconnections:
+    component_description: Element connections description
+    component_name: Element connections
+    connections: Connections
+    connection: Connection
+    no_connections_defined: No connections defined.
+    select_type: Please select a connection type.
+    type: Type
+    source: Source
+    target: Target
+    add: Add
+    edit: Edit
+    remove: Remove
+    connect: Connect
+    connect_and_close: Connect and close
+    update: Update
+    cancel: Cancel
+    sort: Sort
+    sort_connections: Sort connections
+    generic_title: Is connected to...
+    generic_text: Is connected to "{0}"
+    successor_title_source: Is successor of...
+    successor_title_target: Is predecessor of...
+    successor_text_source: Is successor of "{0}"
+    successor_text_target: Is predecessor of "{0}"

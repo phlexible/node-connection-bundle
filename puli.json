@@ -1,0 +1,29 @@
+{
+    "version": "1.0",
+    "name": "phlexible/node-connection-bundle",
+    "path-mappings": {
+        "/phlexible/phlexiblenodeconnection/icons": "Resources/public/icons",
+        "/phlexible/phlexiblenodeconnection/scripts": "Resources/scripts",
+        "/phlexible/phlexiblenodeconnection/styles": "Resources/styles"
+    },
+    "bindings": {
+        "48a69620-cbb2-533e-85a3-30b703c1595c": {
+            "_class": "Puli\\Discovery\\Binding\\ResourceBinding",
+            "query": "/phlexible/phlexiblenodeconnection/icons/*.png",
+            "type": "phlexible/icons"
+        },
+        "76afcf08-832a-5f51-b2bf-ec541b38c7cb": {
+            "_class": "Puli\\Discovery\\Binding\\ResourceBinding",
+            "query": "/phlexible/phlexiblenodeconnection/styles/**/*.css",
+            "type": "phlexible/styles"
+        },
+        "c7807f0e-d2ed-5d27-ac1c-169795f687e4": {
+            "_class": "Puli\\Discovery\\Binding\\ResourceBinding",
+            "query": "/phlexible/phlexiblenodeconnection/scripts/**/*.js",
+            "type": "phlexible/scripts"
+        }
+    },
+    "config": {
+        "bootstrap-file": "vendor/autoload.php"
+    }
+}

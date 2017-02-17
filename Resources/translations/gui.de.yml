@@ -1,0 +1,25 @@
+nodeconnections:
+    component_description: Elementbeziehungen Beschreibung
+    component_name: Elementbeziehungen
+    connections: Beziehungen
+    connection: Beziehung
+    no_connections_defined: Keine Beziehungen definiert.
+    select_type: Bitte wählen Sie einen Beziehungstypen.
+    type: Typ
+    source: Quelle
+    target: Ziel
+    add: Hinzufügen
+    edit: Bearbeiten
+    remove: Entfernen
+    connect: Verbinden
+    connect_and_close: Verbinden und schliessen
+    update: Aktualisieren
+    cancel: Abbrechen
+    sort: Sortieren
+    sort_connections: Beziehungen sortieren
+    generic_title: Ist verknüpft mit...
+    generic_text: Ist verknüpft mit "{0}"
+    successor_title_source: Ist Nachfolger von...
+    successor_title_target: Ist Vorgänger von...
+    successor_text_source: Ist Nachfolger von "{0}"
+    successor_text_target: Ist Vorgänger von "{0}"
