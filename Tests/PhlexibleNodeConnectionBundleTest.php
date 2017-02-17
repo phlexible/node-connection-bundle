@@ -11,11 +11,14 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle\Tests;
 
+use Phlexible\Bundle\NodeConnectionBundle\DependencyInjection\Compiler\AddConnectionTypesPass;
 use Phlexible\Bundle\NodeConnectionBundle\PhlexibleNodeConnectionBundle;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Node connection bundle test.
+ * Node collection bundle test.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
@@ -26,5 +29,15 @@ class PhlexibleNodeConnectionBundleTest extends TestCase
         $bundle = new PhlexibleNodeConnectionBundle();
 
         $this->assertSame('PhlexibleNodeConnectionBundle', $bundle->getName());
+    }
+
+    public function testBuild()
+    {
+        $container = $this->prophesize(ContainerBuilder::class);
+
+        $container->addCompilerPass(Argument::type(AddConnectionTypesPass::class))->shouldBeCalled();
+
+        $bundle = new PhlexibleNodeConnectionBundle();
+        $bundle->build($container->reveal());
     }
 }

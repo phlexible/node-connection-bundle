@@ -11,7 +11,7 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle;
 
-use Phlexible\Bundle\NodeConnectionsBundle\DependencyInjection\Compiler\AddConnectionTypesPass;
+use Phlexible\Bundle\NodeConnectionBundle\DependencyInjection\Compiler\AddConnectionTypesPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

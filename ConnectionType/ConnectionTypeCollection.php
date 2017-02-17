@@ -25,7 +25,7 @@ class ConnectionTypeCollection implements Countable, IteratorAggregate
     /**
      * @var ConnectionTypeInterface[]
      */
-    private $types;
+    private $types = array();
 
     /**
      * @param ConnectionTypeInterface[] $types
@@ -42,7 +42,17 @@ class ConnectionTypeCollection implements Countable, IteratorAggregate
      */
     private function add(ConnectionTypeInterface $type)
     {
-        $this->types[] = $type;
+        $this->types[$type->getKey()] = $type;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function has($key)
+    {
+        return isset($this->types[$key]);
     }
 
     /**
@@ -52,6 +62,10 @@ class ConnectionTypeCollection implements Countable, IteratorAggregate
      */
     public function get($key)
     {
+        if (!$this->has($key)) {
+            return null;
+        }
+
         return $this->types[$key];
     }
 
