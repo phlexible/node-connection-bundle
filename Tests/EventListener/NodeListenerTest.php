@@ -11,11 +11,11 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle\Tests\EventListener;
 
-use Phlexible\Bundle\ElementBundle\Event\SaveNodeDataEvent;
 use Phlexible\Bundle\ElementBundle\ElementEvents;
+use Phlexible\Bundle\ElementBundle\Event\SaveNodeDataEvent;
 use Phlexible\Bundle\NodeConnectionBundle\Doctrine\NodeConnectionManager;
-use Phlexible\Bundle\NodeConnectionBundle\EventListener\NodeListener;
 use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
+use Phlexible\Bundle\NodeConnectionBundle\EventListener\NodeListener;
 use Phlexible\Bundle\TreeBundle\Entity\TreeNode;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -42,22 +42,26 @@ class NodeListenerTest extends TestCase
     {
         $request = new Request(
             array(),
-            array('nodeconnections' => json_encode(array(
-                array(
-                    'id' => 123,
-                    'type' => 'foo',
-                    'source' => 10,
-                    'target' => 100,
-                    'sort' => 99,
-                ),
-                array(
-                    'id' => 234,
-                    'type' => 'bar',
-                    'source' => 20,
-                    'target' => 200,
-                    'sort' => 88,
-                ),
-            )))
+            array(
+                'nodeconnections' => json_encode(
+                    array(
+                        array(
+                            'id'     => 123,
+                            'type'   => 'foo',
+                            'source' => 10,
+                            'target' => 100,
+                            'sort'   => 99,
+                        ),
+                        array(
+                            'id'     => 234,
+                            'type'   => 'bar',
+                            'source' => 20,
+                            'target' => 200,
+                            'sort'   => 88,
+                        ),
+                    )
+                )
+            )
         );
 
         $treeNode = $this->prophesize(TreeNode::class);
@@ -79,14 +83,17 @@ class NodeListenerTest extends TestCase
         $nodeConnectionManager->findByNodeId(10)->willReturn(array($existingUpdateNode, $existingDeleteNode));
         $nodeConnectionManager->find(123)->willReturn(null);
         $nodeConnectionManager->find(234)->willReturn($existingUpdateNode);
-        $nodeConnectionManager->updateNodeConnection(Argument::that(function($connection) {
-            return $connection->getType() === 'foo';
-        }))->shouldBeCalled();
+        $nodeConnectionManager->updateNodeConnection(
+            Argument::that(
+                function ($connection) {
+                    return $connection->getType() === 'foo';
+                }
+            )
+        )->shouldBeCalled();
         $nodeConnectionManager->updateNodeConnection($existingUpdateNode)->shouldBeCalled();
         $nodeConnectionManager->deleteNodeConnection($existingDeleteNode)->shouldBeCalled();
 
         $nodeListener = new NodeListener($nodeConnectionManager->reveal());
         $nodeListener->onSaveNodeData($event);
-
     }
 }
