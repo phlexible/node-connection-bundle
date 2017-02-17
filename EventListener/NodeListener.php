@@ -11,6 +11,7 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle\EventListener;
 
+use Phlexible\Bundle\ElementBundle\Event\SaveNodeDataEvent;
 use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
 use Phlexible\Bundle\NodeConnectionBundle\Model\NodeConnectionManagerInterface;
 
@@ -31,104 +32,83 @@ class NodeListener
         $this->nodeConnectionManager = $nodeConnectionManager;
     }
 
-    public function onSaveNodeData(SaveNodeData $event)
+    /**
+     * @param SaveNodeDataEvent $event
+     */
+    public function onSaveNodeData(SaveNodeDataEvent $event)
     {
         $node = $event->getNode();
-        $data = $event->getData();
         $language = $event->getLanguage();
+        $request = $event->getRequest();
 
-        if (!isset($data['elementconnections']))
-        {
+        if (!$request->request->has('redirect')) {
             return;
         }
 
         $nodeId = $node->getId();
-        $data = $data['elementconnections'];
+        $data = $request->request->get('nodeconnections');
 
-        try
+        $connections = $this->nodeConnectionManager->findByNodeId($nodeId);
+
+        foreach ($data as $row)
         {
-            $connections = $this->nodeConnectionManager->findByNodeId($nodeId);
-            $allTypes = $this->nodeConnectionManager->getAllTypes();
+            $connection = $this->nodeConnectionManager->find($row['id']);
 
-            foreach ($data as $row)
-            {
-                $connection = $this->nodeConnectionManager->find($row['id']);
+            if (!$connection) {
+                $connection = new NodeConnection();
+            } else {
+                foreach ($connections as $index => $existingConnection) {
+                    if ($existingConnection->getId() === $connection->getId()) {
+                        unset($connections['id']);
+                    }
+                }
 
-                if (!$connection) {
-                    $connection = new NodeConnection();
+                $connectionChanged = false;
+                if ($connection->getType() !== $row['type']) {
+                    $connectionChanged = true;
                 } else {
-                    unset($connections[$connection->id]);
-
-                    $connectionChanged = false;
-                    if ($connection->type->getKey() !== $row['type'])
-                    {
-                        $connectionChanged = true;
-                    }
-                    else
-                    {
-                        if ($connection->origin === $row['origin'])
-                        {
-                            if ($connection->source != $row['source'])
-                            {
-                                $connectionChanged = true;
-                            }
-                            elseif ($connection->target != $row['target'])
-                            {
-                                $connectionChanged = true;
-                            }
-                            elseif ($connection->sortSource != $row['sort'])
-                            {
-                                $connectionChanged = true;
-                            }
+                    if ($connection->getSourceNodeId() === $nodeId) {
+                        if ($connection->getSourceNodeId() != $row['source']) {
+                            $connectionChanged = true;
+                        } elseif ($connection->getTargetNodeId() != $row['target']) {
+                            $connectionChanged = true;
+                        } elseif ($connection->getSourceSort() != $row['sort']) {
+                            $connectionChanged = true;
                         }
-                        else
-                        {
-                            if ($connection->source != $row['target'])
-                            {
-                                $connectionChanged = true;
-                            }
-                            elseif ($connection->target != $row['source'])
-                            {
-                                $connectionChanged = true;
-                            }
-                            elseif ($connection->sortTarget != $row['sort'])
-                            {
-                                $connectionChanged = true;
-                            }
+                    } else {
+                        if ($connection->getSourceNodeId() != $row['target']) {
+                            $connectionChanged = true;
+                        } elseif ($connection->getTargetNodeId() != $row['source']) {
+                            $connectionChanged = true;
+                        } elseif ($connection->getTargetSort() != $row['sort']) {
+                            $connectionChanged = true;
                         }
                     }
-
-                    if (!$connectionChanged)
-                    {
-                        continue;
-                    }
                 }
 
-                $connection->type   = $allTypes[$row['type']];
-                $connection->origin = $row['origin'];
-                if ($connection->origin === Makeweb_ElementConnections_Type_Abstract::ORIGIN_SOURCE)
-                {
-                    $connection->source = (integer)$row['source'];
-                    $connection->target = (integer)$row['target'];
-                    $connection->sortSource = (integer)$row['sort'];
+                if (!$connectionChanged) {
+                    continue;
                 }
-                else
-                {
-                    $connection->source = (integer)$row['target'];
-                    $connection->target = (integer)$row['source'];
-                    $connection->sortTarget = (integer)$row['sort'];
-                }
-                $connectionsManager->save($connection);
             }
 
-            foreach ($connections as $connection)
+            $connection->setType($row['type']);
+            if ($connection->getSourceNodeId() === $nodeId) {
+                $connection->setSourceNodeId((int) $row['source']);
+                $connection->setTargetNodeId((int) $row['target']);
+                $connection->setSourceSort((int) $row['sort']);
+            }
+            else
             {
-                $connectionsManager->delete($connection);
+                $connection->setSourceNodeId((int) $row['target']);
+                $connection->setTargetNodeId((int) $row['source']);
+                $connection->setTargetSort((int) $row['sort']);
             }
+
+            $this->nodeConnectionManager->updateNodeConnection($connection);
         }
-        catch (Exception $e)
-        {
-            MWF_Log::exception($e);
+
+        foreach ($connections as $connection) {
+            $this->nodeConnectionManager->deleteNodeConnection($connection);
         }
     }
 }

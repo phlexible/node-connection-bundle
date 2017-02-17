@@ -16,7 +16,6 @@ services:
         tags:
             - { name: phlexible_node_connection.connection_type }
 
-
     phlexible_bundle_node_connection.connection_type.successor_connection_type:
         class: Phlexible\Bundle\NodeConnectionBundle\ConnectionType\SuccessorConnectionType
         tags:
