@@ -18,23 +18,83 @@ namespace Phlexible\Bundle\NodeConnectionBundle\ConnectionType;
  */
 class GenericConnectionType implements ConnectionTypeInterface
 {
-    protected $_key = 'generic';
-    protected $_type = self::TYPE_UNDIRECTED;
-
-    protected $_iconClass = 'm-elementconnections-component-icon';
-
-    public function getTitle($origin, $language)
+    /**
+     * @return string
+     */
+    public function getKey()
     {
-        return $this->_t9n->elementconnections->generic_title;
+        return 'generic';
     }
 
-    public function getIconClass($origin)
+    /**
+     * @return string
+     */
+    public function getType()
     {
-        return $this->_iconClass;
+        return self::TYPE_UNDIRECTED;
     }
 
-    public function getTextTemplate($origin, $language)
+    /**
+     * @return array
+     */
+    public function getAllowedSourceElementTypeIds()
     {
-        return $this->_t9n->elementconnections->generic_text;
+        return array();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceTitle()
+    {
+        return 'generic_source_title';
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceText()
+    {
+        return 'generic_source_text';
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllowedTargetElementTypeIds()
+    {
+        return array();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetTitle()
+    {
+        return 'generic_target_title';
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetText()
+    {
+        return 'generic_target_text';
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceIconClass()
+    {
+        return 'm-elementconnections-component-icon';
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetIconClass()
+    {
+        return 'm-elementconnections-component-icon';
     }
 }

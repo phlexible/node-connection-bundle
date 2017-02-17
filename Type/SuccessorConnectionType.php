@@ -18,51 +18,83 @@ namespace Phlexible\Bundle\NodeConnectionBundle\ConnectionType;
  */
 class SuccessorConnectionType implements ConnectionTypeInterface
 {
-    protected $_key = 'successor';
-    protected $_type = self::TYPE_DIRECTED;
-
-    protected $_iconClassSource = 'm-elementconnections-successor_source-icon';
-    protected $_iconClassTarget = 'm-elementconnections-successor_target-icon';
-
-    public function getTitle($origin, $language)
+    /**
+     * @return string
+     */
+    public function getKey()
     {
-        if ($origin === self::ORIGIN_SOURCE)
-        {
-            return $this->_t9n->elementconnections->successor_title_source;
-        }
-        elseif ($origin === self::ORIGIN_TARGET)
-        {
-            return $this->_t9n->elementconnections->successor_title_target;
-        }
-
-        throw new Makeweb_ElementConnections_Exception('Unknown origin "' . $origin . '"');
+        return 'successor';
     }
 
-    public function getIconClass($origin)
+    /**
+     * @return string
+     */
+    public function getType()
     {
-        if ($origin === self::ORIGIN_SOURCE)
-        {
-            return $this->_iconClassSource;
-        }
-        elseif ($origin === self::ORIGIN_TARGET)
-        {
-            return $this->_iconClassTarget;
-        }
-
-        throw new Makeweb_ElementConnections_Exception('Unknown origin "' . $origin . '"');
+        return self::TYPE_DIRECTED;
     }
 
-    public function getTextTemplate($origin, $language)
+    /**
+     * @return array
+     */
+    public function getAllowedSourceElementTypeIds()
     {
-        if ($origin === self::ORIGIN_SOURCE)
-        {
-            return $this->_t9n->elementconnections->successor_text_source;
-        }
-        elseif ($origin === self::ORIGIN_TARGET)
-        {
-            return $this->_t9n->elementconnections->successor_text_target;
-        }
+        return array();
+    }
 
-        throw new Makeweb_ElementConnections_Exception('Unknown origin "' . $origin . '"');
+    /**
+     * @return string
+     */
+    public function getSourceTitle()
+    {
+        return 'successor_title_source';
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceText()
+    {
+        return 'successor_text_source';
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllowedTargetElementTypeIds()
+    {
+        return array();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetTitle()
+    {
+        return 'successor_title_target';
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetText()
+    {
+        return 'successor_text_target';
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceIconClass()
+    {
+        return 'm-elementconnections-successor_source-icon';
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetIconClass()
+    {
+        return 'm-elementconnections-successor_target-icon';
     }
 }
