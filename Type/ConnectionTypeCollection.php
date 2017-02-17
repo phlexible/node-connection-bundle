@@ -16,7 +16,7 @@ use Countable;
 use IteratorAggregate;
 
 /**
- * Generic connection type
+ * Generic connection type.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */

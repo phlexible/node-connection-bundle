@@ -14,7 +14,7 @@ namespace Phlexible\Bundle\NodeConnectionBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Node connection
+ * Node connection.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  *
@@ -100,6 +100,7 @@ class NodeConnection
 
         return $this;
     }
+
     /**
      * @return int
      */

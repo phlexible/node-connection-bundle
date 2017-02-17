@@ -16,7 +16,7 @@ use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
 use Phlexible\Bundle\NodeConnectionBundle\Model\NodeConnectionManagerInterface;
 
 /**
- * Node listener
+ * Node listener.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
@@ -50,8 +50,7 @@ class NodeListener
 
         $connections = $this->nodeConnectionManager->findByNodeId($nodeId);
 
-        foreach ($data as $row)
-        {
+        foreach ($data as $row) {
             $connection = $this->nodeConnectionManager->find($row['id']);
 
             if (!$connection) {
@@ -68,19 +67,19 @@ class NodeListener
                     $connectionChanged = true;
                 } else {
                     if ($connection->getSourceNodeId() === $nodeId) {
-                        if ($connection->getSourceNodeId() != $row['source']) {
+                        if ($connection->getSourceNodeId() !== $row['source']) {
                             $connectionChanged = true;
-                        } elseif ($connection->getTargetNodeId() != $row['target']) {
+                        } elseif ($connection->getTargetNodeId() !== $row['target']) {
                             $connectionChanged = true;
-                        } elseif ($connection->getSourceSort() != $row['sort']) {
+                        } elseif ($connection->getSourceSort() !== $row['sort']) {
                             $connectionChanged = true;
                         }
                     } else {
-                        if ($connection->getSourceNodeId() != $row['target']) {
+                        if ($connection->getSourceNodeId() !== $row['target']) {
                             $connectionChanged = true;
-                        } elseif ($connection->getTargetNodeId() != $row['source']) {
+                        } elseif ($connection->getTargetNodeId() !== $row['source']) {
                             $connectionChanged = true;
-                        } elseif ($connection->getTargetSort() != $row['sort']) {
+                        } elseif ($connection->getTargetSort() !== $row['sort']) {
                             $connectionChanged = true;
                         }
                     }
@@ -96,9 +95,7 @@ class NodeListener
                 $connection->setSourceNodeId((int) $row['source']);
                 $connection->setTargetNodeId((int) $row['target']);
                 $connection->setSourceSort((int) $row['sort']);
-            }
-            else
-            {
+            } else {
                 $connection->setSourceNodeId((int) $row['target']);
                 $connection->setTargetNodeId((int) $row['source']);
                 $connection->setTargetSort((int) $row['sort']);
