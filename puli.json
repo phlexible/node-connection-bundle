@@ -104,6 +104,10 @@
             "install-path": "vendor/phlexible/access-control-bundle",
             "installer": "composer"
         },
+        "phlexible/element-bundle": {
+            "install-path": "vendor/phlexible/element-bundle",
+            "installer": "composer"
+        },
         "phlexible/gui-bundle": {
             "install-path": "vendor/phlexible/gui-bundle",
             "installer": "composer"

@@ -11,10 +11,13 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle\Controller;
 
+use Phlexible\Bundle\ElementBundle\ElementService;
 use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeCollection;
+use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeInterface;
 use Phlexible\Bundle\NodeConnectionBundle\Doctrine\NodeConnectionService;
+use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
+use Phlexible\Bundle\NodeConnectionBundle\Model\NodeConnectionManagerInterface;
 use Phlexible\Bundle\TreeBundle\ContentTree\ContentTreeManagerInterface;
-use Phlexible\Bundle\TreeBundle\ContentTree\DelegatingContentTreeManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,10 +48,18 @@ class ListController extends Controller
         /** @var $treeManager ContentTreeManagerInterface */
         $treeManager = $this->get('phlexible_tree.content_tree_manager');
 
+        /** @var $elementService ElementService */
+        $elementService = $this->get('phlexible_element.element_service');
+
         /** @var $types ConnectionTypeCollection */
         $types = $this->get('phlexible_node_connection.connection_types');
 
         $connections = $connectionService->findByNodeId($nodeId);
+
+        $node = $treeManager->findByTreeId($nodeId)->get($nodeId);
+        $element = $elementService->findElement($node->getTypeId());
+        $elementtype = $elementService->findElementtype($element);
+        $elementtypeId = $elementtype->getId();
 
         $result = array();
         foreach ($connections as $connection) {
@@ -65,7 +76,6 @@ class ListController extends Controller
             }
 
             try {
-                $sourceNode = $treeManager->findByTreeId($sourceNodeId)->get($sourceNodeId);
                 $targetNode = $treeManager->findByTreeId($targetNodeId)->get($targetNodeId);
             } catch (\Exception $e) {
                 continue;
@@ -90,7 +100,7 @@ class ListController extends Controller
         foreach ($types as $type) {
             $allowedSourceElementTypeIds = $type->getAllowedElementTypeIds('source');
 
-            if (!count($allowedSourceElementTypeIds) || in_array($sourceElementTypeId, $allowedSourceElementTypeIds)) {
+            if (!count($allowedSourceElementTypeIds) || in_array($elementtypeId, $allowedSourceElementTypeIds)) {
                 $types[$type->getKey() . '_source'] = array(
                     'key' => $type->getKey(),
                     'type' => $type->getType(),
@@ -103,7 +113,7 @@ class ListController extends Controller
 
             $allowedElementTypeIdsTarget = $type->getAllowedElementTypeIds('target');
 
-            if (!count($allowedElementTypeIdsTarget) || in_array($sourceElementTypeId, $allowedElementTypeIdsTarget)) {
+            if (!count($allowedElementTypeIdsTarget) || in_array($elementtypeId, $allowedElementTypeIdsTarget)) {
                 $types[$type->getKey() . '_target'] = array(
                     'key' => $type->getKey(),
                     'type' => $type->getType(),
@@ -123,63 +133,54 @@ class ListController extends Controller
         );
     }
 
-    public function saveAction()
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("/save", name="node_connections_save")
+     */
+    public function saveAction(Request $request)
     {
-        $tid = $this->_getParam('tid');
-        $data = $this->_getParam('data');
-        $data = Zend_Json::decode($data);
+        $nodeId = $request->get('tid');
+        $data = $request->get('data');
+        $data = json_decode($data);
 
-        $container = $this->getContainer();
-        $connectionsManager = $container->elementConnectionsManager;
+        /** @var $connectionManager NodeConnectionManagerInterface */
+        $connectionManager = $this->get('phlexible_node_connection.node_connection_manager');
 
-        try
-        {
-            $connections = $connectionsManager->getForTid($tid);
-            $allTypes = $connectionsManager->getAllTypes();
+        /** @var $connectionService NodeConnectionService */
+        $connectionService = $this->get('phlexible_node_connection.node_connection_service');
 
-            foreach ($data as $row)
-            {
-                $connection = $connectionsManager->getById($row['id']);
+        $connections = $connectionService->findByNodeId($nodeId);
 
-                if (!$connection)
-                {
-                    $connection = new Makeweb_ElementConnections_Connection();
-                }
-                else
-                {
-                    unset($connections[$connection->id]);
-                }
+        foreach ($data as $row) {
+            $connection = $connectionService->find($row['id']);
 
-                $connection->type   = $allTypes[$row['type']];
-                $connection->origin = $row['origin'];
-                if ($connection->origin === Makeweb_ElementConnections_Type_Abstract::ORIGIN_SOURCE)
-                {
-                    $connection->source = (integer)$row['source'];
-                    $connection->target = (integer)$row['target'];
-                    $connection->sortSource = (integer)$row['sort'];
-                }
-                else
-                {
-                    $connection->source = (integer)$row['target'];
-                    $connection->target = (integer)$row['source'];
-                    $connection->sortTarget = (integer)$row['sort'];
-                }
-
-                $connectionsManager->save($connection);
+            if (!$connection) {
+                $connection = new NodeConnection();
+            } else {
+                unset($connections[$connection->getId()]);
             }
 
-            foreach ($connections as $connection)
+            $connection->setType($row['type']);
+            $origin = $row['origin'];
+            if ($origin === ConnectionTypeInterface::ORIGIN_SOURCE)
             {
-                $connectionsManager->delete($connection);
+                $connection->setSourceNodeId((int) $row['source']);
+                $connection->setTargetNodeId((int) $row['target']);
+                $connection->setSourceSort((int) $row['sort']);
+            } else {
+                $connection->setSourceNodeId((int) $row['target']);
+                $connection->setTargetNodeId((int) $row['source']);
+                $connection->setTargetSort((int) $row['sort']);
             }
 
-            $result = MWF_Ext_Result::encode(true, 0, 'Connections saved.');
-        }
-        catch (Exception $e)
-        {
-            $result = MWF_Ext_Result::encode(false, 0, $e->getMessage());
+            $connectionManager->updateNodeConnection($connection);
         }
 
-        $this->_response->setAjaxPayload($result);
+        foreach ($connections as $connection) {
+            $connectionManager->deleteNodeConnection($connection);
+        }
+
+        return new JsonResponse();
     }
 }
