@@ -18,34 +18,49 @@ namespace Phlexible\Bundle\NodeConnectionBundle\ConnectionType;
  */
 interface ConnectionTypeInterface
 {
+    const TYPE_DIRECTED = 'directed';
+    const TYPE_UNDIRECTED = 'undirected';
+
+    const ORIGIN_SOURCE = 'source';
+    const ORIGIN_TARGET = 'target';
+
+    /**
+     * @return string
+     */
     public function getKey();
 
+    /**
+     * @return string
+     */
     public function getType();
 
     /**
-     * Get allowed element types (unique ids).
-     *
-     * @param string $origin
-     *
      * @return array
      */
-    public function getAllowedElementTypeUniqueIds($origin);
+    public function getAllowedSourceElementTypeIds();
 
     /**
-     * Get allowed element types (ids).
-     *
-     * @param string $origin
-     *
+     * @return string
+     */
+    public function getSourceTitle();
+
+    /**
+     * @return string
+     */
+    public function getSourceText();
+
+    /**
      * @return array
      */
-    public function getAllowedElementTypeIds($origin);
+    public function getAllowedTargetElementTypeIds();
 
-    public function getIconClass($origin);
+    /**
+     * @return string
+     */
+    public function getTargetTitle();
 
-    public function getTitle($origin, $language);
-
-    public function getText($origin, $text, $language);
-
-    public function getTextTemplate($origin, $language);
-
+    /**
+     * @return string
+     */
+    public function getTargetText();
 }

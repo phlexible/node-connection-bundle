@@ -18,13 +18,7 @@ namespace Phlexible\Bundle\NodeConnectionBundle\ConnectionType;
  */
 abstract class AbstractConnectionType implements ConnectionTypeInterface
 {
-    const TYPE_DIRECTED = 'directed';
-    const TYPE_UNDIRECTED = 'undirected';
-
-    const ORIGIN_SOURCE = 'source';
-    const ORIGIN_TARGET = 'target';
-
-    protected $_key = 'generic';
+    private $key = 'generic';
     protected $_type = self::TYPE_UNDIRECTED;
 
     /**
@@ -51,12 +45,12 @@ abstract class AbstractConnectionType implements ConnectionTypeInterface
 
     public function getKey()
     {
-        return $this->_key;
+        return 'key';
     }
 
     public function getType()
     {
-        return $this->_type;
+        return self::TYPE_UNDIRECTED;
     }
 
     /**

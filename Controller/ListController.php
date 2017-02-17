@@ -11,119 +11,111 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle\Controller;
 
+use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeCollection;
+use Phlexible\Bundle\NodeConnectionBundle\Doctrine\NodeConnectionService;
+use Phlexible\Bundle\TreeBundle\ContentTree\ContentTreeManagerInterface;
+use Phlexible\Bundle\TreeBundle\ContentTree\DelegatingContentTreeManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Connection controller
  *
  * @author Stephan Wentz <sw@brainbits.net>
+ * @Route("/node_connection")
  */
 class ListController extends Controller
 {
-    public function indexAction()
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("/list", name="node_connections_list")
+     */
+    public function indexAction(Request $request)
     {
-        $tid = $this->_getParam('tid', 0);
-        $language = $this->_getParam('language', 'de'); // TODO
+        $nodeId = $request->get('tid');
+        $language = $request->get('language');
 
-        $container = $this->getContainer();
-        $connectionsManager = $container->elementConnectionsManager;
-        $elementVersionManager = $container->elementsVersionManager;
-        $treeManager = $container->elementsTreeManager;
+        /** @var $connectionService NodeConnectionService */
+        $connectionService = $this->get('phlexible_node_connection.node_connection_service');
 
-        $connections = $connectionsManager->getForTid($tid);
+        /** @var $treeManager ContentTreeManagerInterface */
+        $treeManager = $this->get('phlexible_tree.content_tree_manager');
 
-        $sourceNode           = $treeManager->getNodeByNodeId($tid);
-        $sourceElementVersion = $elementVersionManager->getLatest($sourceNode->getEid());
-        $sourceElementTypeId  = $sourceElementVersion->getElementTypeID();
+        /** @var $types ConnectionTypeCollection */
+        $types = $this->get('phlexible_node_connection.connection_types');
+
+        $connections = $connectionService->findByNodeId($nodeId);
 
         $result = array();
-        foreach ($connections as $connection)
-        {
-            if ($tid == $connection->source)
-            {
-                $source = $connection->source;
-                $target = $connection->target;
-                $sort = $connection->sortSource;
-
-            }
-            else
-            {
-                $source = $connection->target;
-                $target = $connection->source;
-                $sort = $connection->sortTarget;
+        foreach ($connections as $connection) {
+            if ($nodeId === $connection->getSourceNodeId()) {
+                $sourceNodeId = $connection->getSourceNodeId();
+                $targetNodeId = $connection->getTargetNodeId();
+                $sort = $connection->getSourceSort();
+                $origin = 'outbound';
+            } else {
+                $sourceNodeId = $connection->getTargetNodeId();
+                $targetNodeId = $connection->getSourceNodeId();
+                $sort = $connection->getTargetSort();
+                $origin = 'inbound';
             }
 
-            try
-            {
-                $node = $treeManager->getNodeByNodeId($target);
-            }
-            catch (Makeweb_Elements_Tree_Exception $e)
-            {
-                // no db constraint -> nodes may me missing
-                MWF_Log::exception($e);
+            try {
+                $sourceNode = $treeManager->findByTreeId($sourceNodeId)->get($sourceNodeId);
+                $targetNode = $treeManager->findByTreeId($targetNodeId)->get($targetNodeId);
+            } catch (\Exception $e) {
                 continue;
             }
 
-            $elementVersion = $elementVersionManager->getLatest($node->getEid());
+            $type = $types->get($connection->getType());
 
             $result[] = array(
-                'id'         => $connection->id,
+                'id'         => $connection->getId(),
                 'new'        => 0,
-                'type'       => $connection->type->getKey(),
-                'iconCls'    => $connection->type->getIconClass($connection->origin),
-                'origin'     => $connection->origin,
-                'source'     => $source,
-                'target'     => $target,
-                'typeText'   => $connection->type->getTitle($connection->origin, $language),
-                'targetText' => $elementVersion->getBackendTitle($language) . ' [' . $target . ']',
+                'type'       => $type->getKey(),
+                'iconCls'    => $type->getIconClass($connection->origin),
+                'typeText'   => $type->getTitle($connection->origin, $language),
+                'origin'     => $origin,
+                'source'     => $sourceNodeId,
+                'target'     => $targetNodeId,
+                'targetText' => $targetNode->getTitle(),
                 'sort'       => $sort
             );
         }
 
-        $allTypes = $connectionsManager->getAllTypes();
+        foreach ($types as $type) {
+            $allowedSourceElementTypeIds = $type->getAllowedElementTypeIds('source');
 
-        $types = array();
-        foreach ($allTypes as $typeKey => $type)
-        {
-            /* @var $type Makeweb_ElementConnections_Type_Abstract */
-            $allowedElementTypeIdsSource = $type->getAllowedElementTypeIds(
-                Makeweb_ElementConnections_Type_Abstract::ORIGIN_SOURCE
-            );
-
-            if (!count($allowedElementTypeIdsSource)
-                || in_array($sourceElementTypeId, $allowedElementTypeIdsSource))
-            {
-                $types[$typeKey . '_' . Makeweb_ElementConnections_Type_Abstract::ORIGIN_SOURCE] = array(
-                    'key'     => $typeKey,
-                    'type'    => $type->getType(),
-                    'origin'  => Makeweb_ElementConnections_Type_Abstract::ORIGIN_SOURCE,
-                    'title'   => $type->getTitle(Makeweb_ElementConnections_Type_Abstract::ORIGIN_SOURCE, $language),
-                    'textTpl' => $type->getTextTemplate(Makeweb_ElementConnections_Type_Abstract::ORIGIN_SOURCE, $language),
-                    'iconCls' => $type->getIconClass(Makeweb_ElementConnections_Type_Abstract::ORIGIN_SOURCE),
-                    'allowedElementTypeIds' => $type->getAllowedElementTypeIds(Makeweb_ElementConnections_Type_Abstract::ORIGIN_TARGET),
+            if (!count($allowedSourceElementTypeIds) || in_array($sourceElementTypeId, $allowedSourceElementTypeIds)) {
+                $types[$type->getKey() . '_source'] = array(
+                    'key' => $type->getKey(),
+                    'type' => $type->getType(),
+                    'origin' => 'source',
+                    'title' => $type->getSourceTitle(),
+                    'text' => $type->getSourceText(),
+                    'allowedElementTypeIds' => $type->getAllowedTargetElementTypeIds(),
                 );
             }
 
-            $allowedElementTypeIdsTarget = $type->getAllowedElementTypeIds(
-                Makeweb_ElementConnections_Type_Abstract::ORIGIN_TARGET
-            );
+            $allowedElementTypeIdsTarget = $type->getAllowedElementTypeIds('target');
 
-            if (!count($allowedElementTypeIdsTarget)
-                || in_array($sourceElementTypeId, $allowedElementTypeIdsTarget))
-            {
-                $types[$typeKey . '_' . Makeweb_ElementConnections_Type_Abstract::ORIGIN_TARGET] = array(
-                    'key'     => $typeKey,
-                    'type'    => $type->getType(),
-                    'origin'  => Makeweb_ElementConnections_Type_Abstract::ORIGIN_TARGET,
-                    'title'   => $type->getTitle(Makeweb_ElementConnections_Type_Abstract::ORIGIN_TARGET, $language),
-                    'textTpl' => $type->getTextTemplate(Makeweb_ElementConnections_Type_Abstract::ORIGIN_TARGET, $language),
-                    'iconCls' => $type->getIconClass(Makeweb_ElementConnections_Type_Abstract::ORIGIN_TARGET, $language),
-                    'allowedElementTypeIds' => $type->getAllowedElementTypeIds(Makeweb_ElementConnections_Type_Abstract::ORIGIN_SOURCE),
+            if (!count($allowedElementTypeIdsTarget) || in_array($sourceElementTypeId, $allowedElementTypeIdsTarget)) {
+                $types[$type->getKey() . '_target'] = array(
+                    'key' => $type->getKey(),
+                    'type' => $type->getType(),
+                    'origin' => 'target',
+                    'title' => $type->getTargetTitle(),
+                    'text' => $type->getTargetText(),
+                    'allowedElementTypeIds' => $type->getAllowedSourceElementTypeIds(),
                 );
             }
         }
 
-        $this->_response->setAjaxPayload(
+        return new JsonResponse(
             array(
                 'connections' => $result,
                 'types'       => $types,

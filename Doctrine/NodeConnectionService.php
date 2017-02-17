@@ -11,14 +11,11 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle\Doctrine;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeCollection;
 use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
 use Phlexible\Bundle\NodeConnectionBundle\Event\NodeConnectionEvent;
 use Phlexible\Bundle\NodeConnectionBundle\Model\NodeConnectionManagerInterface;
 use Phlexible\Bundle\NodeConnectionBundle\NodeConnectionEvents;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Node connection manager
@@ -50,7 +47,26 @@ class NodeConnectionService
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $id
+     *
+     * @return NodeConnection
+     * @throws \Exception
+     */
+    public function get($id)
+    {
+        $connection = $this->nodeConnectionManager->find($id);
+
+        if (!$connection) {
+            throw new \Exception("Node connection $id not found.");
+        }
+
+        return $connection;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return NodeConnection|null
      */
     public function find($id)
     {
@@ -58,7 +74,10 @@ class NodeConnectionService
     }
 
     /**
-     * {@inheritdoc}
+     * @param int         $nodeId
+     * @param string|null $type
+     *
+     * @return NodeConnection[]
      */
     public function findByNodeId($nodeId, $type = null)
     {
@@ -70,7 +89,7 @@ class NodeConnectionService
         }
 
         foreach ($this->nodeConnectionManager->findBy($criteria, array('sortSource' => 'ASC')) as $connection) {
-            $connections[] = new OriginSourceConnection($connection, $this->types->get($connection->getType()));
+            $connections[] = $connection;
         }
 
 
@@ -80,7 +99,7 @@ class NodeConnectionService
         }
 
         foreach ($this->nodeConnectionManager->findBy($criteria, array('sortTarget' => 'ASC')) as $connection) {
-            $connections[] = new OriginTargetConnection($connection, $this->types->get($connection->getType()));
+            $connections[] = $connection;
         }
 
         /*

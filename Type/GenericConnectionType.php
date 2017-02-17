@@ -16,7 +16,7 @@ namespace Phlexible\Bundle\NodeConnectionBundle\ConnectionType;
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
-class GenericConnectionType extends AbstractConnectionType
+class GenericConnectionType implements ConnectionTypeInterface
 {
     protected $_key = 'generic';
     protected $_type = self::TYPE_UNDIRECTED;

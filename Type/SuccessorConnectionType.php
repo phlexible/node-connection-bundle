@@ -16,7 +16,7 @@ namespace Phlexible\Bundle\NodeConnectionBundle\ConnectionType;
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
-class SuccessorConnectionType extends AbstractConnectionType
+class SuccessorConnectionType implements ConnectionTypeInterface
 {
     protected $_key = 'successor';
     protected $_type = self::TYPE_DIRECTED;

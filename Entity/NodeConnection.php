@@ -39,27 +39,27 @@ class NodeConnection
 
     /**
      * @var int
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="source_node_id", type="integer")
      */
-    private $source;
+    private $sourceNodeId;
 
     /**
      * @var int
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="target_node_id", type="integer")
      */
-    private $target;
+    private $targetNodeId;
 
     /**
      * @var int
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="source_sort", type="integer")
      */
-    private $sortSource;
+    private $sourceSort;
 
     /**
      * @var int
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="target_sort", type="integer")
      */
-    private $sortTarget;
+    private $targetSort;
 
     /**
      * @return string
@@ -100,23 +100,22 @@ class NodeConnection
 
         return $this;
     }
-
     /**
      * @return int
      */
-    public function getSource()
+    public function getSourceNodeId()
     {
-        return $this->source;
+        return $this->sourceNodeId;
     }
 
     /**
-     * @param int $source
+     * @param int $sourceNodeId
      *
      * @return $this
      */
-    public function setSource($source)
+    public function setSourceNodeId($sourceNodeId)
     {
-        $this->source = $source;
+        $this->sourceNodeId = $sourceNodeId;
 
         return $this;
     }
@@ -124,19 +123,19 @@ class NodeConnection
     /**
      * @return int
      */
-    public function getTarget()
+    public function getTargetNodeId()
     {
-        return $this->target;
+        return $this->targetNodeId;
     }
 
     /**
-     * @param int $target
+     * @param int $targetNodeId
      *
      * @return $this
      */
-    public function setTarget($target)
+    public function setTargetNodeId($targetNodeId)
     {
-        $this->target = $target;
+        $this->targetNodeId = $targetNodeId;
 
         return $this;
     }
@@ -144,19 +143,19 @@ class NodeConnection
     /**
      * @return int
      */
-    public function getSortSource()
+    public function getSourceSort()
     {
-        return $this->sortSource;
+        return $this->sourceSort;
     }
 
     /**
-     * @param int $sortSource
+     * @param int $sourceSort
      *
      * @return $this
      */
-    public function setSortSource($sortSource)
+    public function setSourceSort($sourceSort)
     {
-        $this->sortSource = $sortSource;
+        $this->sourceSort = $sourceSort;
 
         return $this;
     }
@@ -164,19 +163,19 @@ class NodeConnection
     /**
      * @return int
      */
-    public function getSortTarget()
+    public function getTargetSort()
     {
-        return $this->sortTarget;
+        return $this->targetSort;
     }
 
     /**
-     * @param int $sortTarget
+     * @param int $targetSort
      *
      * @return $this
      */
-    public function setSortTarget($sortTarget)
+    public function setTargetSort($targetSort)
     {
-        $this->sortTarget = $sortTarget;
+        $this->targetSort = $targetSort;
 
         return $this;
     }
