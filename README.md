@@ -37,7 +37,17 @@ public function registerBundles()
 }
 ```
 
-### Step 3: Clear the symfony cache
+### Step 3: Update your database schema
+
+Now that the bundle is set up, the last thing you need to do is update your database schema because the node connection bundle includes entities that need to be installed in your database.
+
+For ORM run the following command.
+
+``` bash
+$ php app/console doctrine:schema:update --force
+```
+
+### Step 4: Clear the symfony cache
 
 If you access your phlexible application with environment prod, clear the cache:
 
