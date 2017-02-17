@@ -46,21 +46,21 @@ class NodeListenerTest extends TestCase
                 'nodeconnections' => json_encode(
                     array(
                         array(
-                            'id'     => 123,
-                            'type'   => 'foo',
+                            'id' => 123,
+                            'type' => 'foo',
                             'source' => 10,
                             'target' => 100,
-                            'sort'   => 99,
+                            'sort' => 99,
                         ),
                         array(
-                            'id'     => 234,
-                            'type'   => 'bar',
+                            'id' => 234,
+                            'type' => 'bar',
                             'source' => 20,
                             'target' => 200,
-                            'sort'   => 88,
+                            'sort' => 88,
                         ),
                     )
-                )
+                ),
             )
         );
 
