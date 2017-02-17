@@ -15,7 +15,7 @@ use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Node connection Event
+ * Node connection Event.
  *
  * @author Matthias Harmuth <mharmuth@brainbits.net>
  */
@@ -27,7 +27,7 @@ class NodeConnectionEvent extends Event
     private $nodeConnection;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param NodeConnection $nodeConnection
      */

@@ -13,7 +13,6 @@ namespace Phlexible\Bundle\NodeConnectionBundle\Doctrine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeCollection;
 use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
 use Phlexible\Bundle\NodeConnectionBundle\Event\NodeConnectionEvent;
 use Phlexible\Bundle\NodeConnectionBundle\Model\NodeConnectionManagerInterface;
@@ -21,7 +20,7 @@ use Phlexible\Bundle\NodeConnectionBundle\NodeConnectionEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Node connection manager
+ * Node connection manager.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
@@ -43,7 +42,7 @@ class NodeConnectionManager implements NodeConnectionManagerInterface
     private $repository;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param EntityManagerInterface   $entityManager
      * @param EventDispatcherInterface $eventDispatcher

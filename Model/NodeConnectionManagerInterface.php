@@ -14,14 +14,14 @@ namespace Phlexible\Bundle\NodeConnectionBundle\Model;
 use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
 
 /**
- * Node connection manager interface
+ * Node connection manager interface.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
 interface NodeConnectionManagerInterface
 {
     /**
-     * @param integer $id
+     * @param int $id
      *
      * @return NodeConnection|null
      */

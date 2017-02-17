@@ -12,7 +12,7 @@
 namespace Phlexible\Bundle\NodeConnectionBundle\ConnectionType;
 
 /**
- * Successor connection type
+ * Successor connection type.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */

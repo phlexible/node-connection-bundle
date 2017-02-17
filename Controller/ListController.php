@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Connection controller
+ * Connection controller.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  * @Route("/node_connection")
@@ -34,6 +34,7 @@ class ListController extends Controller
 {
     /**
      * @param Request $request
+     *
      * @return Response
      * @Route("/list", name="node_connections_list")
      */
@@ -84,16 +85,16 @@ class ListController extends Controller
             $type = $types->get($connection->getType());
 
             $result[] = array(
-                'id'         => $connection->getId(),
-                'new'        => 0,
-                'type'       => $type->getKey(),
-                'iconCls'    => $origin === 'outbound' ? $type->getTargetIconClass() : $type->getSourceIconClass(),
-                'typeText'   => $origin === 'outbound' ? $type->getTargetTitle() : $type->getSourceTitle(),
-                'origin'     => $origin,
-                'source'     => $sourceNodeId,
-                'target'     => $targetNodeId,
+                'id' => $connection->getId(),
+                'new' => 0,
+                'type' => $type->getKey(),
+                'iconCls' => $origin === 'outbound' ? $type->getTargetIconClass() : $type->getSourceIconClass(),
+                'typeText' => $origin === 'outbound' ? $type->getTargetTitle() : $type->getSourceTitle(),
+                'origin' => $origin,
+                'source' => $sourceNodeId,
+                'target' => $targetNodeId,
                 'targetText' => $targetNode->getTitle(),
-                'sort'       => $sort
+                'sort' => $sort,
             );
         }
 
@@ -101,7 +102,7 @@ class ListController extends Controller
             $allowedSourceElementTypeIds = $type->getAllowedElementTypeIds('source');
 
             if (!count($allowedSourceElementTypeIds) || in_array($elementtypeId, $allowedSourceElementTypeIds)) {
-                $types[$type->getKey() . '_source'] = array(
+                $types[$type->getKey().'_source'] = array(
                     'key' => $type->getKey(),
                     'type' => $type->getType(),
                     'origin' => 'source',
@@ -115,7 +116,7 @@ class ListController extends Controller
             $allowedElementTypeIdsTarget = $type->getAllowedElementTypeIds('target');
 
             if (!count($allowedElementTypeIdsTarget) || in_array($elementtypeId, $allowedElementTypeIdsTarget)) {
-                $types[$type->getKey() . '_target'] = array(
+                $types[$type->getKey().'_target'] = array(
                     'key' => $type->getKey(),
                     'type' => $type->getType(),
                     'origin' => 'target',
@@ -130,13 +131,14 @@ class ListController extends Controller
         return new JsonResponse(
             array(
                 'connections' => $result,
-                'types'       => $types,
+                'types' => $types,
             )
         );
     }
 
     /**
      * @param Request $request
+     *
      * @return Response
      * @Route("/save", name="node_connections_save")
      */
@@ -162,8 +164,7 @@ class ListController extends Controller
 
             $connection->setType($row['type']);
             $origin = $row['origin'];
-            if ($origin === ConnectionTypeInterface::ORIGIN_SOURCE)
-            {
+            if ($origin === ConnectionTypeInterface::ORIGIN_SOURCE) {
                 $connection->setSourceNodeId((int) $row['source']);
                 $connection->setTargetNodeId((int) $row['target']);
                 $connection->setSourceSort((int) $row['sort']);

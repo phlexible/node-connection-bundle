@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * Node connections bundle
+ * Node connections bundle.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */

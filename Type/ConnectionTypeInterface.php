@@ -12,7 +12,7 @@
 namespace Phlexible\Bundle\NodeConnectionBundle\ConnectionType;
 
 /**
- * Connection type interface
+ * Connection type interface.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
