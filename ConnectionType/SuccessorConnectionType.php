@@ -53,9 +53,9 @@ class SuccessorConnectionType implements ConnectionTypeInterface
     /**
      * @return string
      */
-    public function getSourceText()
+    public function getSourceIconClass()
     {
-        return 'successor_text_source';
+        return 'p-nodeconnection-successor_source-icon';
     }
 
     /**
@@ -72,22 +72,6 @@ class SuccessorConnectionType implements ConnectionTypeInterface
     public function getTargetTitle()
     {
         return 'successor_title_target';
-    }
-
-    /**
-     * @return string
-     */
-    public function getTargetText()
-    {
-        return 'successor_text_target';
-    }
-
-    /**
-     * @return string
-     */
-    public function getSourceIconClass()
-    {
-        return 'p-nodeconnection-successor_source-icon';
     }
 
     /**

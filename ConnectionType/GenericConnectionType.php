@@ -53,9 +53,9 @@ class GenericConnectionType implements ConnectionTypeInterface
     /**
      * @return string
      */
-    public function getSourceText()
+    public function getSourceIconClass()
     {
-        return 'generic_source_text';
+        return 'p-nodeconnection-component-icon';
     }
 
     /**
@@ -72,22 +72,6 @@ class GenericConnectionType implements ConnectionTypeInterface
     public function getTargetTitle()
     {
         return 'generic_target_title';
-    }
-
-    /**
-     * @return string
-     */
-    public function getTargetText()
-    {
-        return 'generic_target_text';
-    }
-
-    /**
-     * @return string
-     */
-    public function getSourceIconClass()
-    {
-        return 'p-nodeconnection-component-icon';
     }
 
     /**

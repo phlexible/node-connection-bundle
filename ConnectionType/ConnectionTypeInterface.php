@@ -47,11 +47,6 @@ interface ConnectionTypeInterface
     /**
      * @return string
      */
-    public function getSourceText();
-
-    /**
-     * @return string
-     */
     public function getSourceIconClass();
 
     /**
@@ -63,11 +58,6 @@ interface ConnectionTypeInterface
      * @return string
      */
     public function getTargetTitle();
-
-    /**
-     * @return string
-     */
-    public function getTargetText();
 
     /**
      * @return string

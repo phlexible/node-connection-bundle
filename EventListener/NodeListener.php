@@ -57,9 +57,19 @@ class NodeListener implements EventSubscriberInterface
             return;
         }
 
-        $nodeId = $node->getId();
         $data = $request->request->get('nodeconnections');
 
+        if (!$data) {
+            return;
+        }
+
+        $data = json_decode($data, true);
+
+        if (!$data) {
+            $data = array();
+        }
+
+        $nodeId = $node->getId();
         $connections = $this->nodeConnectionManager->findByNodeId($nodeId);
 
         foreach ($data as $row) {
@@ -70,7 +80,8 @@ class NodeListener implements EventSubscriberInterface
             } else {
                 foreach ($connections as $index => $existingConnection) {
                     if ($existingConnection->getId() === $connection->getId()) {
-                        unset($connections['id']);
+                        unset($connections[$index]);
+                        continue;
                     }
                 }
 
@@ -103,7 +114,7 @@ class NodeListener implements EventSubscriberInterface
             }
 
             $connection->setType($row['type']);
-            if ($connection->getSourceNodeId() === $nodeId) {
+            if ($row['source'] === $nodeId) {
                 $connection->setSourceNodeId((int) $row['source']);
                 $connection->setTargetNodeId((int) $row['target']);
                 $connection->setSourceSort((int) $row['sort']);

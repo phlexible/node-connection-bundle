@@ -14,8 +14,6 @@ namespace Phlexible\Bundle\NodeConnectionBundle\Controller;
 use Exception;
 use Phlexible\Bundle\ElementBundle\ElementService;
 use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeCollection;
-use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeInterface;
-use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
 use Phlexible\Bundle\NodeConnectionBundle\Model\NodeConnectionManagerInterface;
 use Phlexible\Bundle\TreeBundle\ContentTree\ContentTreeManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -41,7 +39,7 @@ class ListController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $nodeId = $request->get('tid');
+        $nodeId = (int) $request->get('tid');
 
         /** @var $connectionManager NodeConnectionManagerInterface */
         $connectionManager = $this->get('phlexible_node_connection.node_connection_manager');
@@ -92,16 +90,14 @@ class ListController extends Controller
                 'new' => 0,
                 'type' => $connectionType->getKey(),
                 'iconCls' => $origin === 'outbound' ? $connectionType->getTargetIconClass() : $connectionType->getSourceIconClass(),
-                'typeText' => $origin === 'outbound' ? $connectionType->getTargetTitle() : $connectionType->getSourceTitle(),
+                'typeText' => $translator->trans($origin === 'outbound' ? $connectionType->getTargetTitle() : $connectionType->getSourceTitle(), array(), 'connection_type'),
                 'origin' => $origin,
                 'source' => $sourceNodeId,
                 'target' => $targetNodeId,
-                'targetText' => $targetNode->getTitle(),
+                'targetText' => $targetNode->getTitle($request->getLocale()),
                 'sort' => $sort,
             );
         }
-
-
 
         $types = array();
         foreach ($connectionTypes as $connectionType) {
@@ -114,7 +110,6 @@ class ListController extends Controller
                     'type' => $connectionType->getType(),
                     'origin' => 'source',
                     'title' => $translator->trans($connectionType->getSourceTitle(), array(), 'connection_type'),
-                    'text' => $translator->trans($connectionType->getSourceText(), array(), 'connection_type'),
                     'iconClass' => $connectionType->getSourceIconClass(),
                     'allowedElementTypeIds' => $connectionType->getAllowedTargetElementTypeIds(),
                 );
@@ -129,7 +124,6 @@ class ListController extends Controller
                     'type' => $connectionType->getType(),
                     'origin' => 'target',
                     'title' => $translator->trans($connectionType->getTargetTitle(), array(), 'connection_type'),
-                    'text' => $translator->trans($connectionType->getTargetText(), array(), 'connection_type'),
                     'iconClass' => $connectionType->getTargetIconClass(),
                     'allowedElementTypeIds' => $connectionType->getAllowedSourceElementTypeIds(),
                 );
@@ -142,53 +136,5 @@ class ListController extends Controller
                 'types' => array_values($types),
             )
         );
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     * @Route("/save", name="node_connections_save")
-     */
-    public function saveAction(Request $request)
-    {
-        $nodeId = $request->get('tid');
-        $data = $request->get('data');
-        $data = json_decode($data);
-
-        /** @var $connectionManager NodeConnectionManagerInterface */
-        $connectionManager = $this->get('phlexible_node_connection.node_connection_manager');
-
-        $connections = $connectionManager->findByNodeId($nodeId);
-
-        foreach ($data as $row) {
-            $connection = $connectionManager->find($row['id']);
-
-            if (!$connection) {
-                $connection = new NodeConnection();
-            } else {
-                unset($connections[$connection->getId()]);
-            }
-
-            $connection->setType($row['type']);
-            $origin = $row['origin'];
-            if ($origin === ConnectionTypeInterface::ORIGIN_SOURCE) {
-                $connection->setSourceNodeId((int) $row['source']);
-                $connection->setTargetNodeId((int) $row['target']);
-                $connection->setSourceSort((int) $row['sort']);
-            } else {
-                $connection->setSourceNodeId((int) $row['target']);
-                $connection->setTargetNodeId((int) $row['source']);
-                $connection->setTargetSort((int) $row['sort']);
-            }
-
-            $connectionManager->updateNodeConnection($connection);
-        }
-
-        foreach ($connections as $connection) {
-            $connectionManager->deleteNodeConnection($connection);
-        }
-
-        return new JsonResponse();
     }
 }

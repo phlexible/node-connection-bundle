@@ -54,6 +54,7 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
                     else {
                         this.updateTitle();
                     }
+                    this.getTopToolbar().items.items[0].enable();
                 },
                 scope: this
             }
@@ -142,6 +143,7 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
             //text: this.strings.add,
             tooltip: this.strings.add,
             iconCls: 'p-nodeconnection-add-icon',
+            disabled: true,
             handler: function() {
                 var r = new Phlexible.nodeconnection.model.Connection({
                     id: Ext.id(),
@@ -215,7 +217,7 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
                     data.push([r.id, r.data.typeText, r.data.iconCls, r.data.targetText, r.data.sort]);
                 }, this);
 
-                var w = new Phlexible.nodeconnection.window.NodeConnectionSortWindow({
+                var w = new Phlexible.nodeconnection.window.NodeConnectionsSortWindow({
                     data: data,
                     listeners: {
                         updateData: function(data) {
@@ -273,6 +275,10 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
         var data = [];
 
         var records = this.store.getRange();
+
+        if (!records.length) {
+            return null;
+        }
 
         for(var i=0; i<records.length; i++) {
             data.push({

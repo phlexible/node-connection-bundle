@@ -51,13 +51,13 @@ class NodeConnection
 
     /**
      * @var int
-     * @ORM\Column(name="source_sort", type="integer")
+     * @ORM\Column(name="source_sort", type="integer", nullable=true)
      */
     private $sourceSort;
 
     /**
      * @var int
-     * @ORM\Column(name="target_sort", type="integer")
+     * @ORM\Column(name="target_sort", type="integer", nullable=true)
      */
     private $targetSort;
 

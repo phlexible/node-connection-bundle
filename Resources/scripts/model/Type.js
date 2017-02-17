@@ -6,7 +6,6 @@ Phlexible.nodeconnection.model.Type = Ext.data.Record.create([
     'type',
     'origin',
     'title',
-    'text',
     'iconClass',
     'allowedElementTypeIds'
 ]);
