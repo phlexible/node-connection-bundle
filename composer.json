@@ -3,7 +3,7 @@
     "description": "phlexible node connection bundle",
     "license": "MIT",
     "type": "symfony-bundle",
-    "keywords": ["redirect"],
+    "keywords": ["connection"],
     "autoload": {
         "psr-4": {
             "Phlexible\\Bundle\\NodeConnectionBundle\\": ""

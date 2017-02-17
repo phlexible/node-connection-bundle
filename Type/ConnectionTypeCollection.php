@@ -14,7 +14,6 @@ namespace Phlexible\Bundle\NodeConnectionBundle\ConnectionType;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Traversable;
 
 /**
  * Generic connection type

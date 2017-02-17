@@ -1,13 +1,17 @@
-Phlexible.nodeconnections.NodeConnectionWindow = Ext.extend(Ext.Window, {
-    title: Makeweb.strings.ElementConnections.connection,
-    strings: Makeweb.strings.ElementConnections,
+Ext.provide('Phlexible.nodeconnection.window.NodeConnectionsWindow');
+
+Ext.require('Phlexible.nodeconnection.model.Connection');
+
+Phlexible.nodeconnection.window.NodeConnectionsWindow = Ext.extend(Ext.Window, {
+    title: Phlexible.strings.NodeConnections.connection,
+    strings: Phlexible.strings.NodeConnections,
     layout: 'fit',
     width: 400,
     height: 200,
     modal: true,
 
     getNewRecord: function() {
-        return new Phlexible.nodeconnections.Connection({
+        return new Phlexible.nodeconnection.model.Connection({
             id: Ext.id(),
             'new': 1,
             origin: null,
@@ -181,6 +185,6 @@ Phlexible.nodeconnections.NodeConnectionWindow = Ext.extend(Ext.Window, {
             scope: this
         });
 
-        Phlexible.nodeconnection.NodeConnectionWindow.superclass.initComponent.call(this);
+        Phlexible.nodeconnection.NodeConnectionsWindow.superclass.initComponent.call(this);
     }
 });

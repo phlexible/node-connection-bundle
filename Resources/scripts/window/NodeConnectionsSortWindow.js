@@ -1,4 +1,6 @@
-Phlexible.nodeconnection.NodeConnectionsSortWindow = Ext.extend(Ext.Window, {
+Ext.provide('Phlexible.nodeconnection.window.NodeConnectionsSortWindow');
+
+Phlexible.nodeconnection.window.NodeConnectionsSortWindow = Ext.extend(Ext.Window, {
     title: Phlexible.strings.NodeConnections.sort_connections,
     strings: Phlexible.strings.NodeConnections,
     width: 800,
@@ -76,6 +78,6 @@ Phlexible.nodeconnection.NodeConnectionsSortWindow = Ext.extend(Ext.Window, {
             scope: this
         }];
 
-        Phlexible.nodeconnection.NodeConnectionsSortWindow.superclass.initComponent.call(this);
+        Phlexible.nodeconnection.window.NodeConnectionsSortWindow.superclass.initComponent.call(this);
     }
 });

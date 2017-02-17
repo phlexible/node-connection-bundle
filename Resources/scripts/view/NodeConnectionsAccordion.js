@@ -1,4 +1,9 @@
-Phlexible.nodeconnection.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPanel, {
+Ext.provide('Phlexible.nodeconnection.view.NodeConnectionsAccordion');
+
+Ext.require('Phlexible.nodeconnection.window.NodeConnectionsSortWindow');
+Ext.require('Phlexible.nodeconnection.window.NodeConnectionsWindow');
+
+Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPanel, {
     title: Phlexible.strings.NodeConnections.connections,
     strings: Phlexible.strings.NodeConnections,
     cls: 'p-nodeconnection-accordion',
@@ -141,9 +146,9 @@ Phlexible.nodeconnection.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPane
         this.tbar = [{
             //text: this.strings.add,
             tooltip: this.strings.add,
-            iconCls: 'm-elementconnections-add-icon',
+            iconCls: 'p-nodeconnection-add-icon',
             handler: function() {
-                var r = new Makeweb.elementconnections.Connection({
+                var r = new Phlexible.nodeconnection.model.Connection({
                     id: Ext.id(),
                     'new': 1,
                     origin: null,
@@ -153,7 +158,7 @@ Phlexible.nodeconnection.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPane
                     text: null
                 });
 
-                var w = new Makeweb.elementconnections.NodeConnectionWindow({
+                var w = new Phlexible.nodeconnection.window.NodeConnectionsWindow({
                     siteroot_id: this.siteroot_id,
                     language: this.language,
                     types: this.types,
@@ -180,12 +185,12 @@ Phlexible.nodeconnection.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPane
         },'-',{
             //text: this.strings.edit,
             tooltip: this.strings.edit,
-            iconCls: 'm-elementconnections-edit-icon',
+            iconCls: 'p-nodeconnection-edit-icon',
             disabled: true,
             handler: function() {
                 var r = this.getSelectionModel().getSelected();
 
-                var w = new Makeweb.elementconnections.NodeConnectionWindow({
+                var w = new Phlexible.nodeconnection.window.NodeConnectionsWindow({
                     siteroot_id: this.siteroot_id,
                     language: this.language,
                     types: this.types,
@@ -197,7 +202,7 @@ Phlexible.nodeconnection.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPane
         },'-',{
             //text: this.strings['remove'],
             tooltip: this.strings['remove'],
-            iconCls: 'm-elementconnections-delete-icon',
+            iconCls: 'p-nodeconnection-delete-icon',
             disabled: true,
             handler: function() {
                 var records = this.getSelectionModel().getSelections();
@@ -217,7 +222,7 @@ Phlexible.nodeconnection.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPane
                     data.push([r.id, r.data.typeText, r.data.iconCls, r.data.targetText, r.data.sort]);
                 }, this);
 
-                var w = new Phlexible.nodeconnection.NodeConnectionsSortWindow({
+                var w = new Phlexible.nodeconnection.window.NodeConnectionSortsWindow({
                     data: data,
                     listeners: {
                         updateData: {
@@ -249,7 +254,7 @@ Phlexible.nodeconnection.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPane
             }
         });
 
-        Phlexible.nodeconnection.NodeConnectionsAccordion.superclass.initComponent.call(this);
+        Phlexible.nodeconnection.view.NodeConnectionsAccordion.superclass.initComponent.call(this);
     },
 
     load: function(data, element) {
@@ -305,4 +310,4 @@ Phlexible.nodeconnection.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPane
     }
 });
 
-Ext.reg('nodeconnection-elementconnectionsaccordion', Phlexible.nodeconnection.NodeConnectionsAccordion);
+Ext.reg('nodeconnection-nodeconnectionsaccordion', Phlexible.nodeconnection.view.NodeConnectionsAccordion);

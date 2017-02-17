@@ -93,6 +93,26 @@ class NodeConnectionManager implements NodeConnectionManagerInterface
     }
 
     /**
+     * @param int $nodeId
+     *
+     * @return NodeConnection[]
+     */
+    public function findByNodeId($nodeId)
+    {
+        $connections = array();
+
+        foreach ($this->findBy(['source' => $nodeId], ['sortSource' => 'ASC']) as $connection) {
+            $connections[] = $connection;
+        }
+
+        foreach ($this->findBy(['target' => $nodeId], ['sortTarget' => 'ASC']) as $connection) {
+            $connections[] = $connection;
+        }
+
+        return $connections;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function updateNodeConnection(NodeConnection $nodeConnection)

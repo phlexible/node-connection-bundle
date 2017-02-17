@@ -1,4 +1,6 @@
-Phlexible.nodeconnection.Connection = Ext.data.Record.create([
+Ext.provide('Phlexible.nodeconnection.model.Connection');
+
+Phlexible.nodeconnection.model.Connection = Ext.data.Record.create([
     'id',
     'new',
     'type',

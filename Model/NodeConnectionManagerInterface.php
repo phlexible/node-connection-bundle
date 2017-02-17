@@ -46,6 +46,13 @@ interface NodeConnectionManagerInterface
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
 
     /**
+     * @param int $nodeId
+     *
+     * @return NodeConnection[]
+     */
+    public function findByNodeId($nodeId);
+
+    /**
      * @param NodeConnection $nodeConnection
      */
     public function updateNodeConnection(NodeConnection $nodeConnection);

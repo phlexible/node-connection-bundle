@@ -50,6 +50,11 @@ interface ConnectionTypeInterface
     public function getSourceText();
 
     /**
+     * @return string
+     */
+    public function getSourceIconClass();
+
+    /**
      * @return array
      */
     public function getAllowedTargetElementTypeIds();
@@ -63,11 +68,6 @@ interface ConnectionTypeInterface
      * @return string
      */
     public function getTargetText();
-
-    /**
-     * @return string
-     */
-    public function getSourceIconClass();
 
     /**
      * @return string

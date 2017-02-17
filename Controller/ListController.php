@@ -14,7 +14,6 @@ namespace Phlexible\Bundle\NodeConnectionBundle\Controller;
 use Phlexible\Bundle\ElementBundle\ElementService;
 use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeCollection;
 use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeInterface;
-use Phlexible\Bundle\NodeConnectionBundle\Doctrine\NodeConnectionService;
 use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
 use Phlexible\Bundle\NodeConnectionBundle\Model\NodeConnectionManagerInterface;
 use Phlexible\Bundle\TreeBundle\ContentTree\ContentTreeManagerInterface;
@@ -42,8 +41,8 @@ class ListController extends Controller
         $nodeId = $request->get('tid');
         $language = $request->get('language');
 
-        /** @var $connectionService NodeConnectionService */
-        $connectionService = $this->get('phlexible_node_connection.node_connection_service');
+        /** @var $connectionManager NodeConnectionManagerInterface */
+        $connectionManager = $this->get('phlexible_node_connection.node_connection_manager');
 
         /** @var $treeManager ContentTreeManagerInterface */
         $treeManager = $this->get('phlexible_tree.content_tree_manager');
@@ -54,7 +53,7 @@ class ListController extends Controller
         /** @var $types ConnectionTypeCollection */
         $types = $this->get('phlexible_node_connection.connection_types');
 
-        $connections = $connectionService->findByNodeId($nodeId);
+        $connections = $connectionManager->findByNodeId($nodeId);
 
         $node = $treeManager->findByTreeId($nodeId)->get($nodeId);
         $element = $elementService->findElement($node->getTypeId());
@@ -87,8 +86,8 @@ class ListController extends Controller
                 'id'         => $connection->getId(),
                 'new'        => 0,
                 'type'       => $type->getKey(),
-                'iconCls'    => $type->getIconClass($connection->origin),
-                'typeText'   => $type->getTitle($connection->origin, $language),
+                'iconCls'    => $origin === 'outbound' ? $type->getTargetIconClass() : $type->getSourceIconClass(),
+                'typeText'   => $origin === 'outbound' ? $type->getTargetTitle() : $type->getSourceTitle(),
                 'origin'     => $origin,
                 'source'     => $sourceNodeId,
                 'target'     => $targetNodeId,
@@ -107,6 +106,7 @@ class ListController extends Controller
                     'origin' => 'source',
                     'title' => $type->getSourceTitle(),
                     'text' => $type->getSourceText(),
+                    'iconClass' => $type->getSourceIconClass(),
                     'allowedElementTypeIds' => $type->getAllowedTargetElementTypeIds(),
                 );
             }
@@ -120,6 +120,7 @@ class ListController extends Controller
                     'origin' => 'target',
                     'title' => $type->getTargetTitle(),
                     'text' => $type->getTargetText(),
+                    'iconClass' => $type->getTargetIconClass(),
                     'allowedElementTypeIds' => $type->getAllowedSourceElementTypeIds(),
                 );
             }
@@ -147,13 +148,10 @@ class ListController extends Controller
         /** @var $connectionManager NodeConnectionManagerInterface */
         $connectionManager = $this->get('phlexible_node_connection.node_connection_manager');
 
-        /** @var $connectionService NodeConnectionService */
-        $connectionService = $this->get('phlexible_node_connection.node_connection_service');
-
-        $connections = $connectionService->findByNodeId($nodeId);
+        $connections = $connectionManager->findByNodeId($nodeId);
 
         foreach ($data as $row) {
-            $connection = $connectionService->find($row['id']);
+            $connection = $connectionManager->find($row['id']);
 
             if (!$connection) {
                 $connection = new NodeConnection();

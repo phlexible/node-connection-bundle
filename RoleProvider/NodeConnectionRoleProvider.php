@@ -26,7 +26,7 @@ class NodeConnectionRoleProvider extends RoleProvider
     public function provideRoles()
     {
         return array(
-            'ROLE_NODE_CONNECTION',
+            'ROLE_NODE_CONNECTIONS',
         );
     }
 
