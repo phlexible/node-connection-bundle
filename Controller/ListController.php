@@ -11,6 +11,7 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle\Controller;
 
+use Exception;
 use Phlexible\Bundle\ElementBundle\ElementService;
 use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeCollection;
 use Phlexible\Bundle\NodeConnectionBundle\ConnectionType\ConnectionTypeInterface;
@@ -76,7 +77,7 @@ class ListController extends Controller
 
             try {
                 $targetNode = $treeManager->findByTreeId($targetNodeId)->get($targetNodeId);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 continue;
             }
 

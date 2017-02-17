@@ -1,4 +1,4 @@
-nodeconnections:
+nodeconnection:
     component_description: Element connections description
     component_name: Element connections
     connections: Connections

@@ -12,13 +12,14 @@
 namespace Phlexible\Bundle\NodeConnectionBundle\Tests;
 
 use Phlexible\Bundle\NodeConnectionBundle\PhlexibleNodeConnectionBundle;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Node connection bundle test.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
-class PhlexibleNodeConnectionBundleTest extends \PHPUnit_Framework_TestCase
+class PhlexibleNodeConnectionBundleTest extends TestCase
 {
     public function testBundle()
     {
