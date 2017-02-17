@@ -23,7 +23,7 @@ class NodeListenerTest extends TestCase
     {
         $this->assertSame(
             array(
-                ElementEvents::SAVE_NODE_DATA => array(array('onSaveNodeData', 15)),
+                ElementEvents::SAVE_NODE_DATA => 'onSaveNodeData',
             ),
             NodeListener::getSubscribedEvents()
         );
@@ -33,6 +33,9 @@ class NodeListenerTest extends TestCase
 //    {
 //        $request = new Request();
 //
+//        /**
+//         * @var TreeNode $treeNode
+//         */
 //        $treeNode = $this->prophesize(TreeNode::class);
 //        $treeNode->getId()->willReturn(10);
 //
