@@ -80,7 +80,7 @@ class NodeConnectionManager implements NodeConnectionManagerInterface
      */
     public function findOneBy(array $criteria, array $orderBy = null)
     {
-        $this->getNodeConnectionRepository()->findOneBy($criteria, $orderBy);
+        return $this->getNodeConnectionRepository()->findOneBy($criteria, $orderBy);
     }
 
     /**
@@ -88,7 +88,7 @@ class NodeConnectionManager implements NodeConnectionManagerInterface
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
-        $this->getNodeConnectionRepository()->findBy($criteria, $orderBy, $limit, $offset);
+        return $this->getNodeConnectionRepository()->findBy($criteria, $orderBy, $limit, $offset);
     }
 
     /**
@@ -100,11 +100,11 @@ class NodeConnectionManager implements NodeConnectionManagerInterface
     {
         $connections = array();
 
-        foreach ($this->findBy(['source' => $nodeId], ['sortSource' => 'ASC']) as $connection) {
+        foreach ($this->findBy(['sourceNodeId' => $nodeId], ['sourceSort' => 'ASC']) as $connection) {
             $connections[] = $connection;
         }
 
-        foreach ($this->findBy(['target' => $nodeId], ['sortTarget' => 'ASC']) as $connection) {
+        foreach ($this->findBy(['targetNodeId' => $nodeId], ['targetSort' => 'ASC']) as $connection) {
             $connections[] = $connection;
         }
 

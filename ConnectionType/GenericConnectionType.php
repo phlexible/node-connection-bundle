@@ -87,7 +87,7 @@ class GenericConnectionType implements ConnectionTypeInterface
      */
     public function getSourceIconClass()
     {
-        return 'm-elementconnections-component-icon';
+        return 'p-nodeconnection-component-icon';
     }
 
     /**
@@ -95,6 +95,6 @@ class GenericConnectionType implements ConnectionTypeInterface
      */
     public function getTargetIconClass()
     {
-        return 'm-elementconnections-component-icon';
+        return 'p-nodeconnection-component-icon';
     }
 }

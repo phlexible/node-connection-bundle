@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Stephan Wentz <sw@brainbits.net>
  *
  * @ORM\Entity
- * @ORM\Table(name="property")
+ * @ORM\Table(name="node_connection")
  */
 class NodeConnection
 {

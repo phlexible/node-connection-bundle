@@ -1,5 +1,0 @@
-            'elementconnections_list' => new MWF_Controller_Router_Route(
-                '/elementconnections/list/:action/*',
-                array('module' => 'elementconnections', 'controller' => 'list', 'action' => 'index'),
-                array('_resource' => self::RESOURCE_ELEMENT_CONNECTIONS)
-            ),

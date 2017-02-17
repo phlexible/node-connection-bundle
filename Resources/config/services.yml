@@ -7,7 +7,7 @@ services:
     phlexible_node_connection.node_connection_manager:
         class: Phlexible\Bundle\NodeConnectionBundle\Doctrine\NodeConnectionManager
         arguments:
-            - "@entity_manager"
+            - "@doctrine.orm.entity_manager"
             - "@event_dispatcher"
 
     # connection types
@@ -26,6 +26,8 @@ services:
         class: Phlexible\Bundle\NodeConnectionBundle\EventListener\NodeListener
         arguments:
             - "@phlexible_node_connection.node_connection_manager"
+        tags:
+            - {name: kernel.event_subscriber}
 
     # role providers
     phlexible_node_connection.role_provider:

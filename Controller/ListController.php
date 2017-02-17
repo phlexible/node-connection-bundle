@@ -23,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Connection controller.
@@ -36,12 +37,11 @@ class ListController extends Controller
      * @param Request $request
      *
      * @return Response
-     * @Route("/list", name="node_connections_list")
+     * @Route("/{_locale}/list", name="node_connections_list")
      */
     public function indexAction(Request $request)
     {
         $nodeId = $request->get('tid');
-        $language = $request->get('language');
 
         /** @var $connectionManager NodeConnectionManagerInterface */
         $connectionManager = $this->get('phlexible_node_connection.node_connection_manager');
@@ -52,8 +52,11 @@ class ListController extends Controller
         /** @var $elementService ElementService */
         $elementService = $this->get('phlexible_element.element_service');
 
-        /** @var $types ConnectionTypeCollection */
-        $types = $this->get('phlexible_node_connection.connection_types');
+        /** @var $connectionTypes ConnectionTypeCollection */
+        $connectionTypes = $this->get('phlexible_node_connection.connection_types');
+
+        /** @var $translator TranslatorInterface */
+        $translator = $this->get('translator');
 
         $connections = $connectionManager->findByNodeId($nodeId);
 
@@ -82,14 +85,14 @@ class ListController extends Controller
                 continue;
             }
 
-            $type = $types->get($connection->getType());
+            $connectionType = $connectionTypes->get($connection->getType());
 
             $result[] = array(
                 'id' => $connection->getId(),
                 'new' => 0,
-                'type' => $type->getKey(),
-                'iconCls' => $origin === 'outbound' ? $type->getTargetIconClass() : $type->getSourceIconClass(),
-                'typeText' => $origin === 'outbound' ? $type->getTargetTitle() : $type->getSourceTitle(),
+                'type' => $connectionType->getKey(),
+                'iconCls' => $origin === 'outbound' ? $connectionType->getTargetIconClass() : $connectionType->getSourceIconClass(),
+                'typeText' => $origin === 'outbound' ? $connectionType->getTargetTitle() : $connectionType->getSourceTitle(),
                 'origin' => $origin,
                 'source' => $sourceNodeId,
                 'target' => $targetNodeId,
@@ -98,32 +101,37 @@ class ListController extends Controller
             );
         }
 
-        foreach ($types as $type) {
-            $allowedSourceElementTypeIds = $type->getAllowedElementTypeIds('source');
+
+
+        $types = array();
+        foreach ($connectionTypes as $connectionType) {
+            $allowedSourceElementTypeIds = $connectionType->getAllowedSourceElementTypeIds();
 
             if (!count($allowedSourceElementTypeIds) || in_array($elementtypeId, $allowedSourceElementTypeIds)) {
-                $types[$type->getKey().'_source'] = array(
-                    'key' => $type->getKey(),
-                    'type' => $type->getType(),
+                $types[$connectionType->getKey().'_source'] = array(
+                    'id' => $connectionType->getKey().'_source',
+                    'key' => $connectionType->getKey(),
+                    'type' => $connectionType->getType(),
                     'origin' => 'source',
-                    'title' => $type->getSourceTitle(),
-                    'text' => $type->getSourceText(),
-                    'iconClass' => $type->getSourceIconClass(),
-                    'allowedElementTypeIds' => $type->getAllowedTargetElementTypeIds(),
+                    'title' => $translator->trans($connectionType->getSourceTitle(), array(), 'connection_type'),
+                    'text' => $translator->trans($connectionType->getSourceText(), array(), 'connection_type'),
+                    'iconClass' => $connectionType->getSourceIconClass(),
+                    'allowedElementTypeIds' => $connectionType->getAllowedTargetElementTypeIds(),
                 );
             }
 
-            $allowedElementTypeIdsTarget = $type->getAllowedElementTypeIds('target');
+            $allowedElementTypeIdsTarget = $connectionType->getAllowedTargetElementTypeIds();
 
             if (!count($allowedElementTypeIdsTarget) || in_array($elementtypeId, $allowedElementTypeIdsTarget)) {
-                $types[$type->getKey().'_target'] = array(
-                    'key' => $type->getKey(),
-                    'type' => $type->getType(),
+                $types[$connectionType->getKey().'_target'] = array(
+                    'id' => $connectionType->getKey().'_target',
+                    'key' => $connectionType->getKey(),
+                    'type' => $connectionType->getType(),
                     'origin' => 'target',
-                    'title' => $type->getTargetTitle(),
-                    'text' => $type->getTargetText(),
-                    'iconClass' => $type->getTargetIconClass(),
-                    'allowedElementTypeIds' => $type->getAllowedSourceElementTypeIds(),
+                    'title' => $translator->trans($connectionType->getTargetTitle(), array(), 'connection_type'),
+                    'text' => $translator->trans($connectionType->getTargetText(), array(), 'connection_type'),
+                    'iconClass' => $connectionType->getTargetIconClass(),
+                    'allowedElementTypeIds' => $connectionType->getAllowedSourceElementTypeIds(),
                 );
             }
         }
@@ -131,7 +139,7 @@ class ListController extends Controller
         return new JsonResponse(
             array(
                 'connections' => $result,
-                'types' => $types,
+                'types' => array_values($types),
             )
         );
     }

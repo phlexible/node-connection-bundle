@@ -87,7 +87,7 @@ class SuccessorConnectionType implements ConnectionTypeInterface
      */
     public function getSourceIconClass()
     {
-        return 'm-elementconnections-successor_source-icon';
+        return 'p-nodeconnection-successor_source-icon';
     }
 
     /**
@@ -95,6 +95,6 @@ class SuccessorConnectionType implements ConnectionTypeInterface
      */
     public function getTargetIconClass()
     {
-        return 'm-elementconnections-successor_target-icon';
+        return 'p-nodeconnection-successor_target-icon';
     }
 }

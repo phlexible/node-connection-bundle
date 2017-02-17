@@ -1,10 +1,11 @@
 Ext.provide('Phlexible.nodeconnection.window.NodeConnectionsWindow');
 
 Ext.require('Phlexible.nodeconnection.model.Connection');
+Ext.require('Phlexible.nodeconnection.model.Type');
 
 Phlexible.nodeconnection.window.NodeConnectionsWindow = Ext.extend(Ext.Window, {
-    title: Phlexible.strings.NodeConnections.connection,
-    strings: Phlexible.strings.NodeConnections,
+    title: Phlexible.nodeconnection.Strings.connection,
+    strings: Phlexible.nodeconnection.Strings,
     layout: 'fit',
     width: 400,
     height: 200,
@@ -29,13 +30,13 @@ Phlexible.nodeconnection.window.NodeConnectionsWindow = Ext.extend(Ext.Window, {
         }
 
         var data = [];
-        for (var i in this.types) {
-            var type = this.types[i];
+        Ext.each(this.types, function(type) {
+            if (type.type === 'undirected' && type.origin === 'target') {
+                return;
+            }
 
-            if (type.type === 'undirected' && type.origin === 'target') continue;
-
-            data.push([type.key + '_' + type.origin, type.key, type.origin, type.title, type.iconCls, type.allowedElementTypeIds]);
-        }
+            data.push(type);//[type.key + '_' + type.origin, type.key, type.origin, type.title, type.iconCls, type.allowedElementTypeIds]);
+        });
 
         this.items = [{
             xtype: 'form',
@@ -47,15 +48,15 @@ Phlexible.nodeconnection.window.NodeConnectionsWindow = Ext.extend(Ext.Window, {
                 name: 'type',
                 fieldLabel: this.strings.type,
                 value: this.record.data['new'] ? null : this.record.data.type + '_' + this.record.data.origin,
-                store: new Ext.data.SimpleStore({
-                    fields: ['id', 'key', 'origin', 'name', 'iconCls', 'allowedElementTypeIds'],
+                store: new Ext.data.JsonStore({
+                    fields: Phlexible.nodeconnection.model.Type,
                     data: data,
-                    id: 0
+                    id: 'id'
                 }),
                 emptyText: this.strings.select_type,
-                displayField: 'name',
+                displayField: 'title',
                 valueField: 'id',
-                iconClsField: 'iconCls',
+                iconClsField: 'iconClass',
                 mode: 'local',
                 editable: false,
                 typeAhead: false,
@@ -64,12 +65,10 @@ Phlexible.nodeconnection.window.NodeConnectionsWindow = Ext.extend(Ext.Window, {
                 anchor: '-20',
                 allowBlank: false,
                 listeners: {
-                    select: {
-                        fn: function(combo, r) {
-                            this.getComponent(0).getComponent(1).setElementTypeIds(r.data.allowedElementTypeIds);
-                        },
-                        scope: this
-                    }
+                    select: function(combo, r) {
+                        this.getComponent(0).getComponent(1).setElementTypeIds(r.data.allowedElementTypeIds);
+                    },
+                    scope: this
                 }
             },{
                 xtype: 'linkfield',
@@ -119,19 +118,21 @@ Phlexible.nodeconnection.window.NodeConnectionsWindow = Ext.extend(Ext.Window, {
             formBind: true,
             handler: function() {
                 var typeField = this.getComponent(0).getComponent(0);
-                var typeRecord = typeField.getStore().getById(typeField.getValue());
+                var type = typeField.getStore().getById(typeField.getValue());
 
                 var targetField = this.getComponent(0).getComponent(1);
                 var targetValue = targetField.getValue();
-                var targetValue = targetValue.match(/^.*\:(\d+)/)[1];
+                if (typeof targetValue !== 'string') {
+                     targetValue = targetValue.tid;
+                }
 
-                var type = this.types[typeRecord.data.key + '_' + typeRecord.data.origin];
+                //var type = this.types[typeRecord.data.key + '_' + typeRecord.data.origin];
 
                 this.record.set('new', 2);
-                this.record.set('origin', typeRecord.data.origin);
-                this.record.set('type', typeRecord.data.key);
-                this.record.set('iconCls', type.iconCls);
-                this.record.set('typeText', type.title);
+                this.record.set('origin', type.get('origin'));
+                this.record.set('type', type.get('key'));
+                this.record.set('iconCls', type.get('iconClass'));
+                this.record.set('typeText', type.get('title'));
                 this.record.set('target', targetValue);
                 this.record.set('targetText', targetField.getRawValue());
                 this.record.set('sort', 0);
@@ -154,7 +155,9 @@ Phlexible.nodeconnection.window.NodeConnectionsWindow = Ext.extend(Ext.Window, {
 
                     var targetField = this.getComponent(0).getComponent(1);
                     var targetValue = targetField.getValue();
-                    var targetValue = targetValue.match(/^.*\:(\d+)$/)[1];
+                    if (typeof targetValue !== 'string') {
+                        targetValue = targetValue.tid;
+                    }
 
                     var type = this.types[typeRecord.data.key + '_' + typeRecord.data.origin];
 
@@ -185,6 +188,6 @@ Phlexible.nodeconnection.window.NodeConnectionsWindow = Ext.extend(Ext.Window, {
             scope: this
         });
 
-        Phlexible.nodeconnection.NodeConnectionsWindow.superclass.initComponent.call(this);
+        Phlexible.nodeconnection.window.NodeConnectionsWindow.superclass.initComponent.call(this);
     }
 });

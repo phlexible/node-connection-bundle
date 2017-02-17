@@ -1,11 +1,12 @@
 Ext.provide('Phlexible.nodeconnection.view.NodeConnectionsAccordion');
 
+Ext.require('Phlexible.nodeconnection.model.Connection');
 Ext.require('Phlexible.nodeconnection.window.NodeConnectionsSortWindow');
 Ext.require('Phlexible.nodeconnection.window.NodeConnectionsWindow');
 
 Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.GridPanel, {
-    title: Phlexible.strings.NodeConnections.connections,
-    strings: Phlexible.strings.NodeConnections,
+    title: Phlexible.nodeconnection.Strings.connections,
+    strings: Phlexible.nodeconnection.Strings,
     cls: 'p-nodeconnection-accordion',
     iconCls: 'p-nodeconnection-component-icon',
     autoHeight: true,
@@ -22,7 +23,7 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
     initComponent: function() {
         this.store = new Ext.data.GroupingStore({
             proxy: new Ext.data.HttpProxy({
-                url: Phlexible.baseUrl + '/nodeconnections/list/index',
+                url: Phlexible.Router.generate('node_connections_list', {"_locale": Phlexible.Config.get('language.backend') || 'en'}),
                 baseParams: {
                     tid: 0,
                     language: ''
@@ -31,7 +32,7 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
             reader: new Ext.data.JsonReader({
                 root: 'connections',
                 id: 'id'
-            }, Phlexible.nodeconnection.Connection),
+            }, Phlexible.nodeconnection.model.Connection),
             //url: MWF.baseUrl + '/elementconnections/list/index',
             //fields: Makeweb.elementconnections.Connection,
             //root: 'connections',
@@ -43,23 +44,18 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
             //    language: ''
             //},
             listeners: {
-                datachanged: {
-                    fn: function(store) {
-                        this.types = store.reader.jsonData.types;
-                    },
-                    scope: this
+                datachanged: function(store) {
+                    this.types = store.reader.jsonData.types;
                 },
-                load: {
-                    fn: function(store, records) {
-                        if (records.length) {
-                            this.updateTitle(records.length);
-                        }
-                        else {
-                            this.updateTitle();
-                        }
-                    },
-                    scope: this
-                }
+                load: function(store, records) {
+                    if (records.length) {
+                        this.updateTitle(records.length);
+                    }
+                    else {
+                        this.updateTitle();
+                    }
+                },
+                scope: this
             }
         });
 
@@ -69,7 +65,8 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
             enableNoGroups: true,
             enableGroupingMenu: false,
             groupTextTpl: '{text} ({[values.rs.length]})',
-            emptyText: this.strings.no_connections_defined
+            emptyText: this.strings.no_connections_defined,
+            deferEmptyText: false
         });
 
         this.columns = [{
@@ -98,7 +95,7 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
             width: 200,
             hidden: !this.noGrouping,
             renderer: function(v, md, r) {
-                return (r.data.iconCls ? MWF.inlineIcon(r.data.iconCls) + ' ' : '') + v;
+                return (r.data.iconCls ? Phlexible.inlineIcon(r.data.iconCls) + ' ' : '') + v;
             }
         },{
             header: this.strings.connection,
@@ -119,25 +116,23 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
         this.selModel = new Ext.grid.RowSelectionModel({
             multiSelect: true,
             listeners: {
-                selectionchange: {
-                    fn: function(sm) {
-                        records = sm.getSelections();
+                selectionchange: function(sm) {
+                    records = sm.getSelections();
 
-                        if (records.length == 1) {
-                            this.getTopToolbar().items.items[2].enable();
-                            this.getTopToolbar().items.items[4].enable();
-                        }
-                        else if (records.length > 1) {
-                            this.getTopToolbar().items.items[2].disable();
-                            this.getTopToolbar().items.items[4].enable();
-                        }
-                        else {
-                            this.getTopToolbar().items.items[2].disable();
-                            this.getTopToolbar().items.items[4].disable();
-                        }
-                    },
-                    scope: this
-                }
+                    if (records.length == 1) {
+                        this.getTopToolbar().items.items[2].enable();
+                        this.getTopToolbar().items.items[4].enable();
+                    }
+                    else if (records.length > 1) {
+                        this.getTopToolbar().items.items[2].disable();
+                        this.getTopToolbar().items.items[4].enable();
+                    }
+                    else {
+                        this.getTopToolbar().items.items[2].disable();
+                        this.getTopToolbar().items.items[4].disable();
+                    }
+                },
+                scope: this
             }
         });
 
@@ -165,18 +160,16 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
                     //record: r,
                     tid: this.tid,
                     listeners: {
-                        connect: {
-                            fn: function(r) {
-                                var max = 0;
-                                this.store.each(function(r) {
-                                    if (r.data.sort > max) max = r.data.sort;
-                                }, this);
-                                r.set('sort', max + 1);
-                                this.store.add(r);
-                                this.store.sort('sort', 'ASC');
-                            },
-                            scope: this
-                        }
+                        connect: function(r) {
+                            var max = 0;
+                            this.store.each(function(r) {
+                                if (r.data.sort > max) max = r.data.sort;
+                            }, this);
+                            r.set('sort', max + 1);
+                            this.store.add(r);
+                            this.store.sort('sort', 'ASC');
+                        },
+                        scope: this
                     }
                 });
                 w.show();
@@ -222,20 +215,18 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
                     data.push([r.id, r.data.typeText, r.data.iconCls, r.data.targetText, r.data.sort]);
                 }, this);
 
-                var w = new Phlexible.nodeconnection.window.NodeConnectionSortsWindow({
+                var w = new Phlexible.nodeconnection.window.NodeConnectionSortWindow({
                     data: data,
                     listeners: {
-                        updateData: {
-                            fn: function(data) {
-                                this.store.each(function(r) {
-                                    if (data[r.id] >= 0) {
-                                        r.set('sort', data[r.id]);
-                                    }
-                                }, this);
-                                this.store.sort('sort', 'ASC');
-                            },
-                            scope: this
-                        }
+                        updateData: function(data) {
+                            this.store.each(function(r) {
+                                if (data[r.id] >= 0) {
+                                    r.set('sort', data[r.id]);
+                                }
+                            }, this);
+                            this.store.sort('sort', 'ASC');
+                        },
+                        scope: this
                     }
                 });
                 w.show();
@@ -244,14 +235,12 @@ Phlexible.nodeconnection.view.NodeConnectionsAccordion = Ext.extend(Ext.grid.Gri
         }];
 
         this.on({
-            rowdblclick: {
-                fn: function(grid, rowIndex) {
-                    var r = grid.getStore().getAt(rowIndex);
+            rowdblclick: function(grid, rowIndex) {
+                var r = grid.getStore().getAt(rowIndex);
 
-                    this.element.load(r.data.target);
-                },
-                scope: this
-            }
+                this.element.load(r.data.target);
+            },
+            scope: this
         });
 
         Phlexible.nodeconnection.view.NodeConnectionsAccordion.superclass.initComponent.call(this);

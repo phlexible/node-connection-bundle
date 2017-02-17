@@ -12,7 +12,7 @@
             "query": "/phlexible/phlexiblenodeconnection/icons/*.png",
             "type": "phlexible/icons"
         },
-        "76afcf08-832a-5f51-b2bf-ec541b38c7cb": {
+        "76bfcf08-832a-5f51-b2bf-ec541b38c7cb": {
             "_class": "Puli\\Discovery\\Binding\\ResourceBinding",
             "query": "/phlexible/phlexiblenodeconnection/styles/**/*.css",
             "type": "phlexible/styles"

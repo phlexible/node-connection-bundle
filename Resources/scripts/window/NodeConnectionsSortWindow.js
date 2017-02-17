@@ -1,8 +1,8 @@
 Ext.provide('Phlexible.nodeconnection.window.NodeConnectionsSortWindow');
 
 Phlexible.nodeconnection.window.NodeConnectionsSortWindow = Ext.extend(Ext.Window, {
-    title: Phlexible.strings.NodeConnections.sort_connections,
-    strings: Phlexible.strings.NodeConnections,
+    title: Phlexible.nodeconnection.Strings.sort_connections,
+    strings: Phlexible.nodeconnection.Strings,
     width: 800,
     height: 500,
     constrainHeader: true,
@@ -27,7 +27,7 @@ Phlexible.nodeconnection.window.NodeConnectionsSortWindow = Ext.extend(Ext.Windo
                 dataIndex: 'typeText',
                 width: 200,
                 renderer: function(v, md, r) {
-                    return (r.data.iconCls ? MWF.inlineIcon(r.data.iconCls) + ' ' : '') + v;
+                    return (r.data.iconCls ? Phlexible.inlineIcon(r.data.iconCls) + ' ' : '') + v;
                 }
             },{
                 header: this.strings.connection,
@@ -47,12 +47,10 @@ Phlexible.nodeconnection.window.NodeConnectionsSortWindow = Ext.extend(Ext.Windo
             enableDragDrop: true,
             ddGroup: 'elementConnectionsSortDD',
             listeners: {
-                render: {
-                    fn: function(grid) {
-                        this.ddrow = new Ext.ux.dd.GridReorderDropTarget(grid, {
-                            copy: false
-                        });
-                    }
+                render: function(grid) {
+                    this.ddrow = new Ext.ux.dd.GridReorderDropTarget(grid, {
+                        copy: false
+                    });
                 }
             }
         }];

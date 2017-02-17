@@ -11,16 +11,18 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle\EventListener;
 
+use Phlexible\Bundle\ElementBundle\ElementEvents;
 use Phlexible\Bundle\ElementBundle\Event\SaveNodeDataEvent;
 use Phlexible\Bundle\NodeConnectionBundle\Entity\NodeConnection;
 use Phlexible\Bundle\NodeConnectionBundle\Model\NodeConnectionManagerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Node listener.
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
-class NodeListener
+class NodeListener implements EventSubscriberInterface
 {
     /**
      * @var NodeConnectionManagerInterface
@@ -33,6 +35,16 @@ class NodeListener
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            ElementEvents::SAVE_NODE_DATA => 'onSaveNodeData',
+        );
+    }
+
+    /**
      * @param SaveNodeDataEvent $event
      */
     public function onSaveNodeData(SaveNodeDataEvent $event)
@@ -41,7 +53,7 @@ class NodeListener
         $language = $event->getLanguage();
         $request = $event->getRequest();
 
-        if (!$request->request->has('redirect')) {
+        if (!$request->request->has('nodeconnections')) {
             return;
         }
 
