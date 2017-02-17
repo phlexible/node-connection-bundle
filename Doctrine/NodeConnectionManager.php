@@ -100,11 +100,11 @@ class NodeConnectionManager implements NodeConnectionManagerInterface
     {
         $connections = array();
 
-        foreach ($this->findBy(['sourceNodeId' => $nodeId], ['sourceSort' => 'ASC']) as $connection) {
+        foreach ($this->getNodeConnectionRepository()->findBy(['sourceNodeId' => $nodeId], ['sourceSort' => 'ASC']) as $connection) {
             $connections[] = $connection;
         }
 
-        foreach ($this->findBy(['targetNodeId' => $nodeId], ['targetSort' => 'ASC']) as $connection) {
+        foreach ($this->getNodeConnectionRepository()->findBy(['targetNodeId' => $nodeId], ['targetSort' => 'ASC']) as $connection) {
             $connections[] = $connection;
         }
 
