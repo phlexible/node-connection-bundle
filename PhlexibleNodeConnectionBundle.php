@@ -11,6 +11,8 @@
 
 namespace Phlexible\Bundle\NodeConnectionBundle;
 
+use Phlexible\Bundle\NodeConnectionsBundle\DependencyInjection\Compiler\AddConnectionTypesPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -20,4 +22,11 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class PhlexibleNodeConnectionBundle extends Bundle
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new AddConnectionTypesPass());
+    }
 }

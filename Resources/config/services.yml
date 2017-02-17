@@ -14,3 +14,14 @@ services:
         class: Phlexible\Bundle\NodeConnectionBundle\EventListener\NodeListener
         arguments:
             - "@phlexible_node_connection.node_connection_manager"
+
+    phlexible_bundle_node_connection.connection_type.generic_connection_type:
+        class: Phlexible\Bundle\NodeConnectionBundle\ConnectionType\GenericConnectionType
+        tags:
+          - { name: phlexible_node_connection.connection_type }
+
+
+    phlexible_bundle_node_connection.connection_type.successor_connection_type:
+            class: Phlexible\Bundle\NodeConnectionBundle\ConnectionType\SuccessorConnectionType
+            tags:
+              - { name: phlexible_node_connection.connection_type }
