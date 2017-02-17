@@ -38,11 +38,6 @@ class NodeConnectionManager implements NodeConnectionManagerInterface
     private $eventDispatcher;
 
     /**
-     * @var ConnectionTypeCollection
-     */
-    private $types;
-
-    /**
      * @var EntityRepository
      */
     private $repository;
@@ -52,16 +47,13 @@ class NodeConnectionManager implements NodeConnectionManagerInterface
      *
      * @param EntityManagerInterface   $entityManager
      * @param EventDispatcherInterface $eventDispatcher
-     * @param ConnectionTypeCollection $types
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        EventDispatcherInterface $eventDispatcher,
-        array $types
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
-        $this->types = $types;
     }
 
     /**
@@ -87,63 +79,17 @@ class NodeConnectionManager implements NodeConnectionManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function findByNodeId($nodeId, $type = null)
+    public function findOneBy(array $criteria, array $orderBy = null)
     {
-        $connections = array();
+        $this->getNodeConnectionRepository()->findOneBy($criteria, $orderBy);
+    }
 
-        $queryBuilder = $this->getNodeConnectionRepository()->createQueryBuilder('c');
-        $queryBuilder
-            ->where($queryBuilder->expr()->eq('c.source', $nodeId))
-            ->orderBy('c.sortSource', 'ASC');
-
-        if ($type) {
-            $queryBuilder->andWhere($queryBuilder->expr()->eq('c.type', $type));
-        }
-
-        foreach ($queryBuilder->getQuery()->getResult() as $connection) {
-            $connections[] = new OriginSourceConnection($connection, $this->types->get($connection->getType()));
-        }
-
-        $queryBuilder = $this->getNodeConnectionRepository()->createQueryBuilder('c');
-        $queryBuilder
-            ->where($queryBuilder->expr()->eq('c.target', $nodeId))
-            ->orderBy('c.sortTarget', 'ASC');
-
-        if ($type) {
-            $queryBuilder->andWhere($queryBuilder->expr()->eq('c.type', $type));
-        }
-
-        foreach ($queryBuilder->getQuery()->getResult() as $connection) {
-            $connections[] = new OriginTargetConnection($connection, $this->types->get($connection->getType()));
-        }
-
-        /*
-        $connection         = new Makeweb_ElementConnections_Connection();
-        $connection->id     = Brainbits_Util_Uuid::generate();
-        $connection->type   = $types['generic'];
-        $connection->source = 1024;
-        $connection->target = 1109;
-        $connection->origin = 'source';
-        $connections[]      = $connection;
-
-        $connection         = new Makeweb_ElementConnections_Connection();
-        $connection->id     = Brainbits_Util_Uuid::generate();
-        $connection->type   = $types['successor'];
-        $connection->source = 1024;
-        $connection->target = 1082;
-        $connection->origin = 'target';
-        $connections[]      = $connection;
-
-        $connection         = new Makeweb_ElementConnections_Connection();
-        $connection->id     = Brainbits_Util_Uuid::generate();
-        $connection->type   = new Makeweb_ElementConnections_Type_Successor();
-        $connection->source = 1082;
-        $connection->target = 1024;
-        $connection->origin = 'source';
-        $connections[]      = $connection;
-        */
-
-        return $connections;
+    /**
+     * {@inheritdoc}
+     */
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    {
+        $this->getNodeConnectionRepository()->findBy($criteria, $orderBy, $limit, $offset);
     }
 
     /**

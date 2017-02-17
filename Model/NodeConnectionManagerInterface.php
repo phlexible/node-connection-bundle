@@ -28,12 +28,22 @@ interface NodeConnectionManagerInterface
     public function find($id);
 
     /**
-     * @param integer $nodeId
-     * @param string  $type
+     * @param array      $criteria
+     * @param array|null $orderBy
+     *
+     * @return NodeConnection|null
+     */
+    public function findOneBy(array $criteria, array $orderBy = null);
+
+    /**
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int|null   $limit
+     * @param int|null   $offset
      *
      * @return NodeConnection[]
      */
-    public function findByNodeId($nodeId, $type = null);
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
 
     /**
      * @param NodeConnection $nodeConnection

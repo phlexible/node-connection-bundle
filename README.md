@@ -1,21 +1,21 @@
-PhlexibleTinymceBundle
-======================
+PhlexibleNodeConnectionBundle
+=============================
 
-The PhlexibleTinymceBundle adds support for country-based content support in phlexible.
+The PhlexibleNodeConnectionBundle adds support inter-node-connection in phlexible.
 
 Installation
 ------------
 
-1. Download PhlexibleTinymceBundle using composer
+1. Download PhlexibleNodeConnectionBundle using composer
 2. Enable the Bundle
 3. Clear the symfony cache
 
-### Step 1: Download PhlexibleTinymceBundle using composer
+### Step 1: Download PhlexibleNodeConnectionBundle using composer
 
-Add PhlexibleTinymceBundle by running the command:
+Add PhlexibleNodeConnectionBundle by running the command:
 
 ``` bash
-$ php composer.phar require phlexible/tinymce-bundle "~1.0.0"
+$ php composer.phar require phlexible/node-connection-bundle "~1.0.0"
 ```
 
 Composer will install the bundle to your project's `vendor/phlexible` directory.
@@ -32,7 +32,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new Phlexible\Bundle\TinymceBundle\PhlexibleTinymceBundle(),
+        new Phlexible\Bundle\NodeConnectionBundle\PhlexibleNodeConnectionBundle(),
     );
 }
 ```
