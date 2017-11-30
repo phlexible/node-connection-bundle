@@ -77,9 +77,16 @@ class ListController extends Controller
                 $origin = 'inbound';
             }
 
+            $targetNode = null;
             try {
-                $targetNode = $treeManager->findByTreeId($targetNodeId)->get($targetNodeId);
+                $targetTree = $treeManager->findByTreeId($targetNodeId);
+                if ($targetTree) {
+                    $targetNode = $targetTree->get($targetNodeId);
+                }
             } catch (Exception $e) {
+            }
+
+            if (!$targetNode) {
                 continue;
             }
 
